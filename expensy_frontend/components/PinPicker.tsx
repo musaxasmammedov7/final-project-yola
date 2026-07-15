@@ -58,8 +58,8 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
   // reverse geocode when map stops
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     const timer = setTimeout(() => {
+      setLoading(true);
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`)
         .then(r => r.json())
         .then(d => {

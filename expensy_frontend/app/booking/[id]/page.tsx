@@ -36,7 +36,7 @@ function Booking({ id }: { id: string }) {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-200">
             <Icon name="checkmark-circle" style={{ fontSize: "44px", color: "#16A34A" }} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">You're all set!</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">You&apos;re all set!</h1>
           <p className="text-slate-500 text-sm mb-8">Seat confirmed. Have a great trip!</p>
 
           <div className="bg-white rounded-2xl border border-green-100 shadow-sm p-6 text-left mb-6">
