@@ -1,49 +1,86 @@
 "use client";
 import Icon from "@/components/Icon";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import DriverAvatar from "@/components/DriverAvatar";
-import { RIDES, rideServesRoute, segmentPrice } from "@/lib/data";
+import { searchRides, type ApiRide } from "@/lib/api";
+import { DRIVER_PROFILES } from "@/lib/data";
+
+const PROVERBS = [
+  { az: "Hər şeyin bir vaxtı var",    en: "Everything has its time" },
+  { az: "Yol yoldaşı can yoldaşıdır", en: "A travel companion is a soul companion" },
+  { az: "Səfər insanı kamilləşdirir", en: "Travel perfects a person" },
+  { az: "Yolun başlanğıcı yarısıdır", en: "Starting the journey is half the journey" },
+];
+
+function driverIdByName(name: string) {
+  return DRIVER_PROFILES.find(d => d.name === name)?.id ?? "d1";
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm animate-skeleton">
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-slate-200" />
+          <div>
+            <div className="w-24 h-3.5 bg-slate-200 rounded mb-2" />
+            <div className="w-16 h-2.5 bg-slate-100 rounded" />
+          </div>
+        </div>
+        <div className="w-10 h-6 bg-slate-200 rounded" />
+      </div>
+      <div className="h-2 bg-slate-100 rounded mb-3" />
+      <div className="h-2 bg-slate-100 rounded w-3/4" />
+    </div>
+  );
+}
 
 function Results() {
   const params = useSearchParams();
   const router = useRouter();
-  const from = params.get("from") || "";
-  const to = params.get("to") || "";
-  const date = params.get("date") || "";
+  const [proverb] = useState(() => PROVERBS[Math.floor(Math.random() * PROVERBS.length)]);
+  const from  = params.get("from") || "";
+  const to    = params.get("to") || "";
+  const date  = params.get("date") || "";
   const seats = Number(params.get("seats") || 1);
 
-  const [sort, setSort] = useState<"price" | "time" | "rating">("price");
+  const [sort, setSort]       = useState<"price" | "time" | "rating">("price");
   const [maxPrice, setMaxPrice] = useState(20);
+  const [rides, setRides]     = useState<ApiRide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState<string | null>(null);
 
-  const filtered = RIDES
-    .filter(r =>
-      rideServesRoute(r, from, to) &&
-      r.seats >= seats &&
-      segmentPrice(r, from, to) <= maxPrice
-    )
+  useEffect(() => {
+    if (!from || !to) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    searchRides(from, to, date, seats)
+      .then(r => { setRides(r); setLoading(false); })
+      .catch(() => { setError("Could not load rides. Check your connection."); setLoading(false); });
+  }, [from, to, date, seats]);
+
+  const filtered = rides
+    .filter(r => (r.segmentPrice ?? r.price) <= maxPrice)
     .sort((a, b) => {
-      if (sort === "price") return segmentPrice(a, from, to) - segmentPrice(b, from, to);
-      if (sort === "rating") return b.driver.rating - a.driver.rating;
+      if (sort === "price")  return (a.segmentPrice ?? a.price) - (b.segmentPrice ?? b.price);
+      if (sort === "rating") return b.driverRating - a.driverRating;
       return a.departureTime.localeCompare(b.departureTime);
     });
 
-  // pickup/dropoff waypoints for each ride
-  const getPickup = (ride: typeof RIDES[0]) =>
-    ride.waypoints.find(w => w.city.toLowerCase() === from.toLowerCase());
-  const getDropoff = (ride: typeof RIDES[0]) =>
-    ride.waypoints.find(w => w.city.toLowerCase() === to.toLowerCase());
+  const getPickup  = (r: ApiRide) => r.waypoints.find(w => w.city.toLowerCase() === from.toLowerCase());
+  const getDropoff = (r: ApiRide) => r.waypoints.find(w => w.city.toLowerCase() === to.toLowerCase());
 
   return (
     <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 py-8 animate-fade-up">
         <div className="mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{from} → {to}</h1>
           <p className="text-sm text-slate-400 mt-1">
-            {date} · {seats} seat{seats > 1 ? "s" : ""} · {filtered.length} ride{filtered.length !== 1 ? "s" : ""} found
+            {date} · {seats} seat{seats > 1 ? "s" : ""} · {loading ? "…" : `${filtered.length} ride${filtered.length !== 1 ? "s" : ""} found`}
           </p>
         </div>
 
@@ -56,7 +93,7 @@ function Results() {
                 <button
                   key={s}
                   onClick={() => setSort(s)}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all active:scale-95 ${
                     sort === s ? "bg-indigo-700 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                   }`}
                 >
@@ -72,44 +109,60 @@ function Results() {
           </div>
         </div>
 
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
-            <Icon name="car-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 12px" }} />
-            <p className="font-semibold text-slate-600 text-lg">Hər şeyin bir vaxtı var</p>
-            <p className="text-xs text-slate-400 mt-1 mb-4 italic">Everything has its time</p>
-            <p className="text-sm text-slate-400">Try a different date or adjust the price filter</p>
-          </div>
-        ) : (
+        {loading && (
           <div className="flex flex-col gap-3">
-            {filtered.map(ride => {
+            {[1, 2, 3].map(i => <SkeletonCard key={i} />)}
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-12 text-slate-400">
+            <Icon name="cloud-offline-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 12px" }} />
+            <p className="text-sm font-medium text-slate-500">{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && filtered.length === 0 && (
+          <div className="text-center py-16 text-slate-400 animate-fade-up">
+            <Icon name="car-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 16px" }} />
+            <div className="mb-1">
+              <p className="font-semibold text-slate-600 text-base italic">"{proverb.az}"</p>
+              <p className="text-xs text-slate-400 mt-0.5">{proverb.en}</p>
+            </div>
+            <p className="text-sm text-slate-400 mt-4">Try a different date or adjust the price filter</p>
+          </div>
+        )}
+
+        {!loading && !error && filtered.length > 0 && (
+          <div className="flex flex-col gap-3">
+            {filtered.map((ride, idx) => {
               const pickup  = getPickup(ride);
               const dropoff = getDropoff(ride);
-              const price   = segmentPrice(ride, from, to);
-              // show via stops between from and to
+              const price   = ride.segmentPrice ?? ride.price;
               const cities  = ride.waypoints.map(w => w.city.toLowerCase());
               const fi = cities.indexOf(from.toLowerCase());
               const ti = cities.indexOf(to.toLowerCase());
               const via = ride.waypoints.slice(fi + 1, ti).map(w => w.city);
+              const driverId = driverIdByName(ride.driverName);
 
               return (
                 <div
-                  key={ride.id}
-                  onClick={() => router.push(`/ride/${ride.id}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${date}&seats=${seats}`)}
-                  className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer"
+                  key={ride._id}
+                  onClick={() => router.push(`/ride/${ride._id}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${date}&seats=${seats}`)}
+                  className={`bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer animate-fade-up stagger-${Math.min(idx + 1, 6)}`}
                 >
                   <div className="flex justify-between items-start mb-4">
-                    {/* Driver — separate link, stops card click */}
                     <Link
-                      href={`/driver/${ride.driverId}`}
+                      href={`/driver/${driverId}`}
                       onClick={e => e.stopPropagation()}
                       className="flex items-center gap-3 group"
                     >
-                      <DriverAvatar name={ride.driver.name} size={40} />
+                      <DriverAvatar name={ride.driverName} size={40} />
                       <div>
-                        <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{ride.driver.name}</p>
+                        <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{ride.driverName}</p>
                         <p className="text-xs text-indigo-700 font-semibold mt-0.5 flex items-center gap-0.5">
                           <Icon name="star" style={{ fontSize: "11px" }} />
-                          {ride.driver.rating} · {ride.driver.trips} trips
+                          {ride.driverRating} · {ride.driverTrips} trips
                         </p>
                       </div>
                     </Link>
@@ -119,7 +172,6 @@ function Results() {
                     </div>
                   </div>
 
-                  {/* Route timeline */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="text-right w-12">
                       <p className="text-sm font-bold text-slate-900 tabular-nums">{ride.departureTime}</p>
@@ -140,7 +192,6 @@ function Results() {
                     </div>
                   </div>
 
-                  {/* Pickup / dropoff detail */}
                   {(pickup?.detail || dropoff?.detail) && (
                     <div className="flex justify-between text-xs text-slate-400 mb-3">
                       <span>{pickup?.detail}</span>

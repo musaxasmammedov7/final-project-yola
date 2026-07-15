@@ -13,7 +13,8 @@ const TABS = [
 export default function BottomNav() {
   const path = usePathname();
   const isAuth = path === "/login" || path === "/register";
-  if (isAuth) return null;
+  const isFullscreen = path.startsWith("/chat/") || path.startsWith("/tracking/");
+  if (isAuth || isFullscreen) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-100 safe-area-pb md:hidden">

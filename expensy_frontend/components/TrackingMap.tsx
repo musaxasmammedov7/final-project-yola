@@ -25,7 +25,7 @@ const endPin   = pinIcon("#EF4444");
 
 function PanTo({ pos }: { pos: [number, number] }) {
   const map = useMap();
-  useEffect(() => { map.panTo(pos, { animate: true, duration: 1 }); }, [pos]);
+  useEffect(() => { map.setView(pos, map.getZoom(), { animate: true, duration: 0.8, easeLinearity: 0.25 }); }, [pos]);
   return null;
 }
 
@@ -75,7 +75,7 @@ export default function TrackingMap({ waypoints, progress }: Props) {
   const center: [number, number] = [waypoints[0].lat, waypoints[0].lng];
 
   return (
-    <MapContainer center={center} zoom={8} style={{ width: "100%", height: "100%" }} zoomControl={false} attributionControl={false}>
+    <MapContainer center={center} zoom={12} style={{ width: "100%", height: "100%" }} zoomControl={false} attributionControl={false}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <PanTo pos={carPos} />
 

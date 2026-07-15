@@ -35,3 +35,8 @@ crash.*.log
 # ── Инфраструктура и локальные данные кластера ──
 expensy-data/
 *.log
+
+# ── Claude / AI agent files ──
+.claude/
+CLAUDE.md
+AGENTS.md
