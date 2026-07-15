@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yola-apps
+  namespace: argocd
+  annotations:
+    # sync-wave: "4" — основное приложение yola разворачивается последним
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/musaxasmammedov7/final-project-yola.git
+    targetRevision: main
+    path: gitops/yola
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: yola
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      # Страховка, основной способ создания namespace — файл namespace.yaml из gitops/yola/
+      - CreateNamespace=true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/template/spec/containers/0/image

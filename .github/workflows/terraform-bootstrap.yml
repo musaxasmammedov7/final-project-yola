@@ -1,0 +1,54 @@
+name: Terraform ArgoCD Bootstrap
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  RESOURCE_GROUP_NAME: expensy-rg
+  AKS_NAME: expensy-aks
+
+jobs:
+  argocd-bootstrap:
+    name: Install ArgoCD and root app
+    runs-on: ubuntu-latest
+    
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_TERRAFORM_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group "$RESOURCE_GROUP_NAME" --name "$AKS_NAME" --overwrite-existing
+
+      - name: Install ArgoCD
+        run: |
+          kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+
+          # 1. Стираем застрявший поврежденный CRD из прошлых запусков
+          kubectl delete crd applicationsets.argoproj.io --ignore-not-found
+
+          # 2. Ставим ArgoCD с флагами --server-side и --force-conflicts
+          # --force-conflicts заставит кластер отдать владение полями новому пайплайну
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --server-side --force-conflicts
+
+          # 3. Ждем стабилизации подов
+          kubectl rollout status deployment/argocd-repo-server -n argocd --timeout=300s
+          kubectl rollout status deployment/argocd-server -n argocd --timeout=300s
+          kubectl rollout status statefulset/argocd-application-controller -n argocd --timeout=300s
+
+          # 4. Проверяем успешную установку всех CRD
+          kubectl get crd | grep argoproj.io
+
+      - name: Apply root app
+        run: kubectl apply -f gitops/apps/root-app.yaml

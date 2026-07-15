@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: yola-backend-pdb
+  namespace: yola
+  labels:
+    app: yola-backend
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: yola-backend

@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: yola-gateway
+  namespace: istio-system
+  labels:
+    # Говорит Istio: "Не создавай свой Deployment/Service.
+    # Используй тот, что я развернул через Helm-чарт istio-ingressgateway."
+    gateway.istio.io/managed: custom
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: yola-tls-cert
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: All

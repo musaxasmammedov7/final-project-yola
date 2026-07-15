@@ -1,0 +1,119 @@
+name: Terraform Identity Bootstrap
+
+on:
+  workflow_dispatch:
+    inputs:
+      delete_temp_sp:
+        description: "Delete the temporary bootstrap service principal after apply"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  TERRAFORM_VERSION: 1.8.5
+  TF_IN_AUTOMATION: true
+  TF_STATE_RESOURCE_GROUP: ${{ vars.TF_STATE_RESOURCE_GROUP || 'yola-tfstate-rg' }}
+  TF_STATE_LOCATION: ${{ vars.TF_STATE_LOCATION || 'swedencentral' }}
+  TF_STATE_STORAGE_ACCOUNT: ${{ vars.TF_STATE_STORAGE_ACCOUNT || 'yolatf2026musa' }}
+  TF_STATE_CONTAINER: ${{ vars.TF_STATE_CONTAINER || 'tfstate' }}
+  ARM_CLIENT_ID: ${{ secrets.AZURE_TEMP_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_TEMP_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  bootstrap:
+    name: Create RG, identities, and federated credentials
+    runs-on: ubuntu-latest
+    environment: identity-bootstrap
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login with temporary SP
+        run: |
+          az login --service-principal \
+            --username "$ARM_CLIENT_ID" \
+            --password "$ARM_CLIENT_SECRET" \
+            --tenant "$ARM_TENANT_ID"
+          az account set --subscription "$ARM_SUBSCRIPTION_ID"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Ensure Terraform remote state backend
+        run: |
+          az group create \
+            --name "$TF_STATE_RESOURCE_GROUP" \
+            --location "$TF_STATE_LOCATION"
+
+          az storage account create \
+            --name "$TF_STATE_STORAGE_ACCOUNT" \
+            --resource-group "$TF_STATE_RESOURCE_GROUP" \
+            --location "$TF_STATE_LOCATION" \
+            --sku Standard_LRS \
+            --kind StorageV2 \
+            --min-tls-version TLS1_2 \
+            --allow-blob-public-access false
+
+          ACCOUNT_KEY="$(az storage account keys list \
+            --resource-group "$TF_STATE_RESOURCE_GROUP" \
+            --account-name "$TF_STATE_STORAGE_ACCOUNT" \
+            --query '[0].value' \
+            --output tsv)"
+
+          echo "::add-mask::$ACCOUNT_KEY"
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> "$GITHUB_ENV"
+
+          az storage container create \
+            --name "$TF_STATE_CONTAINER" \
+            --account-name "$TF_STATE_STORAGE_ACCOUNT" \
+            --account-key "$ACCOUNT_KEY"
+
+      - name: Terraform init
+        working-directory: terraform/bootstrap
+        run: |
+          terraform init -input=false \
+            -backend-config="resource_group_name=$TF_STATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TF_STATE_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$TF_STATE_CONTAINER" \
+            -backend-config="key=bootstrap.tfstate"
+
+      - name: Terraform fmt
+        working-directory: terraform/bootstrap
+        run: terraform fmt -check -recursive
+
+      - name: Terraform validate
+        working-directory: terraform/bootstrap
+        run: terraform validate
+
+      - name: Terraform apply
+        working-directory: terraform/bootstrap
+        run: terraform apply -auto-approve -input=false
+
+      - name: Print bootstrap outputs
+        working-directory: terraform/bootstrap
+        run: terraform output
+
+      - name: Grant Terraform identity access to state backend
+        working-directory: terraform/bootstrap
+        run: |
+          TERRAFORM_PRINCIPAL_ID="$(terraform output -raw terraform_principal_id)"
+          STATE_RG_ID="$(az group show --name "$TF_STATE_RESOURCE_GROUP" --query id -o tsv)"
+
+          az role assignment create \
+            --assignee-object-id "$TERRAFORM_PRINCIPAL_ID" \
+            --assignee-principal-type ServicePrincipal \
+            --role Contributor \
+            --scope "$STATE_RG_ID" \
+          || true
+
+      - name: Delete temporary bootstrap SP
+        if: ${{ inputs.delete_temp_sp }}
+        run: az ad sp delete --id "${{ secrets.AZURE_TEMP_CLIENT_ID }}"

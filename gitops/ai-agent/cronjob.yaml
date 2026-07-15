@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ai-agent
+  namespace: monitoring
+spec:
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 300
+      template:
+        metadata:
+          labels:
+            app: ai-agent
+        spec:
+          serviceAccountName: ai-agent
+          restartPolicy: Never
+          containers:
+            - name: ai-agent
+              image: python:3.12-slim
+              command:
+                - bash
+                - -c
+                - |
+                  pip install --quiet requests openai kubernetes &&
+                  python /scripts/analyze.py
+              env:
+                - name: OPENAI_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: ai-agent-openai-secret
+                      key: api-key
+                - name: OPENAI_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: ai-agent-openai-secret
+                      key: endpoint
+                - name: TELEGRAM_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: ai-agent-openai-secret
+                      key: telegram-token
+                - name: TELEGRAM_CHAT_ID
+                  value: "7538711142"
+                - name: PROMETHEUS_URL
+                  value: "http://prometheus-grafana-kube-pr-prometheus.monitoring:9090"
+                - name: LOKI_URL
+                  value: "http://loki-stack.monitoring:3100"
+                - name: JAEGER_URL
+                  value: "http://jaeger-query.monitoring:16686"
+                - name: PYTHONUNBUFFERED
+                  value: "1"
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: script
+              configMap:
+                name: ai-agent-script
+                defaultMode: 0755

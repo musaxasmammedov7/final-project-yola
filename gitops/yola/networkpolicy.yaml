@@ -1,0 +1,256 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: yola
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: yola
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istio-control-plane-egress
+  namespace: yola
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    # КРИТИЧНО: Envoy sidecar (istio-proxy), автоматически инжектируемый в каждый Pod благодаря istio-injection: enabled на namespace, должен непрерывно общаться с istiod в namespace istio-system на портах 15012 (XDS), 15010 (legacy XDS gRPC) и 15014 (Pilot debug/monitoring). Без этого правила Envoy sidecar не получит конфигурацию маршрутизации от control plane, и поды зависнут — readinessProbe будет фейлить бесконечно, даже если основной контейнер приложения полностью здоров. Разрешаем ВЕСЬ egress на istio-system (не точечные порты), потому что набор служебных портов Istio может отличаться между версиями — широкое правило надёжнее, чем хардкодить список портов, который может стать неактуальным после обновления Istio.
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: yola-frontend
+      ports:
+        - protocol: TCP
+          port: 8706
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-egress-to-backend
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-frontend
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: yola-backend
+      ports:
+        - protocol: TCP
+          port: 8706
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-mongo
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-mongo-svc
+  policyTypes:
+    - Ingress
+  ingress:
+    # MongoDB Community Operator обычно присваивает labels: app=yola-mongo-svc, statefulset.kubernetes.io/pod-name=yola-mongo-N и т.д.
+    # ПРОВЕРИТЬ ПОСЛЕ ДЕПЛОЯ: выполнить kubectl get pods -n yola --show-labels и убедиться, что selectors совпадают.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: yola-backend
+      ports:
+        - protocol: TCP
+          port: 27017
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-egress-to-mongo
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-backend
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: yola-mongo-svc
+      ports:
+        - protocol: TCP
+          port: 27017
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-redis
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: yola-redis
+  policyTypes:
+    - Ingress
+  ingress:
+    # Redis остаётся на Bitnami Helm chart, использует labels: app.kubernetes.io/instance=yola-redis
+    # ПРОВЕРИТЬ ПОСЛЕ ДЕПЛОЯ: выполнить kubectl get pods -n yola --show-labels и убедиться, что селектор совпадает.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: yola-backend
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-egress-to-redis
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-backend
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: yola-redis
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istio-ingress-to-frontend
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-frontend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - protocol: TCP
+          port: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istio-ingress-to-backend
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - protocol: TCP
+          port: 8706
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-mongo-to-mongo
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-mongo-svc
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: yola-mongo-svc
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: yola-mongo-svc
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-mongo-egress-to-apiserver
+  namespace: yola
+spec:
+  podSelector:
+    matchLabels:
+      app: yola-mongo-svc
+  policyTypes:
+    - Egress
+  egress:
+    # MongoDB Community Agent обращается к Kubernetes API server (10.0.0.1:443)
+    # для получения конфигурации replica set. Вместо 0.0.0.0/0 ограничиваем
+    # service CIDR кластера (10.0.0.0/16) — сюда входят все ClusterIP сервисы,
+    # включая API server.
+    - to:
+        - ipBlock:
+            cidr: 10.0.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443

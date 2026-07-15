@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yola-backend
+  namespace: yola
+  labels:
+    app: yola-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: yola-backend
+  template:
+    metadata:
+      labels:
+        app: yola-backend
+    spec:
+      serviceAccountName: yola-backend-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - yola-backend
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: backend
+          # CI updates this tag automatically via commit
+          image: yolaprod.azurecr.io/yola-backend:5938aee50c6e495ee5699c8e5976d6c8aee7e0c6
+          ports:
+            - containerPort: 8706
+              name: http
+          envFrom:
+            - configMapRef:
+                name: yola-backend-config
+            - secretRef:
+                name: yola-backend-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+          # ВАЖНО: этот readinessProbe ожидает, что в коде Express приложения
+          # (yola_backend/) реализован роут app.get('/health', (req, res) =>
+          # res.status(200).send('OK')) или аналогичный. Если такого роута нет —
+          # Pod никогда не перейдёт в Ready (или уйдёт в CrashLoopBackOff, если
+          # используется livenessProbe), и Service не будет направлять трафик на
+          # этот Pod. Это нужно физически дописать в код backend разработчиком —
+          # манифесты Kubernetes сами этот эндпоинт не создают.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8706
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8706
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}

@@ -1,0 +1,14 @@
+# Helm values for loki-stack
+promtail:
+  enabled: true # Enable Promtail as DaemonSet to collect logs automatically from all nodes
+
+grafana:
+  sidecar:
+    datasources:
+      enabled: false # Loki datasource already managed in prometheus-grafana values.yaml
+
+loki:
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClassName: yola-azure-disk

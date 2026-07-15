@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ingressgateway
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: gateway
+    targetRevision: 1.22.3
+    helm:
+      releaseName: istio-ingressgateway
+      skipSchemaValidation: true
+      values: |
+        labels:
+          istio: ingressgateway
+          # Этот лейбл связывает Helm-деплоймент с Gateway API ресурсом
+          gateway.networking.k8s.io/gateway-name: yola-gateway
+        replicaCount: 1
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 2000m
+            memory: 1024Mi
+        service:
+          type: LoadBalancer
+          annotations:
+            # Привязка к конкретному Azure Public IP
+            service.beta.kubernetes.io/azure-pip-name: yola-istio-ingress-pip
+            service.beta.kubernetes.io/azure-load-balancer-resource-group: yola-rg
+          ports:
+            - name: status-port
+              port: 15021
+              protocol: TCP
+              targetPort: 15021
+            - name: http2
+              port: 80
+              protocol: TCP
+              targetPort: 80
+            - name: https
+              port: 443
+              protocol: TCP
+              targetPort: 443
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

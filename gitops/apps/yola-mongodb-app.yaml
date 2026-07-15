@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yola-mongodb
+  namespace: argocd
+  annotations:
+    # sync-wave: "3" — MongoDB Community CR разворачивается после синхронизации ExternalSecret
+    # и после запуска оператора (sync-wave: "0")
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/musaxasmammedov7/final-project-yola.git
+    path: gitops/yola/mongodb
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: yola
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

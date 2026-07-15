@@ -1,0 +1,103 @@
+name: Terraform Drift Detection
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+
+env:
+  TERRAFORM_VERSION: 1.8.5
+  TF_IN_AUTOMATION: true
+  TF_STATE_RESOURCE_GROUP: ${{ vars.TF_STATE_RESOURCE_GROUP || 'yola-tfstate-rg' }}
+  TF_STATE_LOCATION: ${{ vars.TF_STATE_LOCATION || 'swedencentral' }}
+  TF_STATE_STORAGE_ACCOUNT: ${{ vars.TF_STATE_STORAGE_ACCOUNT || 'yolatf2026musa' }}
+  TF_STATE_CONTAINER: ${{ vars.TF_STATE_CONTAINER || 'tfstate' }}
+  ARM_USE_OIDC: true
+  ARM_CLIENT_ID: ${{ secrets.AZURE_TERRAFORM_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TERRAFORM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  drift-check:
+    name: Detect infrastructure drift
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_TERRAFORM_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Read remote state backend key
+        run: |
+          ACCOUNT_KEY="$(az storage account keys list \
+            --resource-group "$TF_STATE_RESOURCE_GROUP" \
+            --account-name "$TF_STATE_STORAGE_ACCOUNT" \
+            --query '[0].value' \
+            --output tsv)"
+
+          echo "::add-mask::$ACCOUNT_KEY"
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> "$GITHUB_ENV"
+
+      - name: Terraform init
+        working-directory: terraform
+        run: |
+          terraform init -input=false \
+            -backend-config="resource_group_name=$TF_STATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TF_STATE_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$TF_STATE_CONTAINER" \
+            -backend-config="key=prod.terraform.tfstate"
+
+      - name: Terraform plan (drift check)
+        id: plan
+        working-directory: terraform
+        run: |
+          terraform plan -no-color -input=false -detailed-exitcode -out=tfplan 2>&1 | tee plan_output.txt
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue if drift detected
+        if: steps.plan.outputs.exit_code == '2'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('terraform/plan_output.txt', 'utf8');
+            const body = `## Infrastructure Drift Detected
+
+            Terraform detected changes in the infrastructure that were not applied through code.
+
+            \`\`\`
+            ${plan}
+            \`\`\`
+
+            **Action required:** Review the changes and run \`terraform apply\` to reconcile, or revert the manual changes in Azure Portal.
+
+            *Detected by drift detection workflow at ${new Date().toISOString()}*`;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Infrastructure drift detected',
+              body: body,
+              labels: ['drift', 'infrastructure']
+            });
+
+      - name: No drift detected
+        if: steps.plan.outputs.exit_code == '0'
+        run: echo "No infrastructure drift detected. All resources match Terraform state."

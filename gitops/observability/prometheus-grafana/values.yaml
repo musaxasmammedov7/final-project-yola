@@ -1,0 +1,74 @@
+# Helm values for kube-prometheus-stack
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    # Allows Prometheus to discover ServiceMonitors in other namespaces (like istio-system and yola)
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorNamespaceSelector: {}
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: yola-azure-disk
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
+kube-state-metrics:
+  metricLabelsAllowlist:
+    - namespaces=[cluster]
+  prometheus:
+    monitor:
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: "kube_.*"
+          targetLabel: cluster
+          replacement: "aks-yola"
+
+kubelet:
+  serviceMonitor:
+    metricRelabelings:
+      - targetLabel: cluster
+        replacement: "aks-yola"
+    cAdvisorMetricRelabelings:
+      - targetLabel: cluster
+        replacement: "aks-yola"
+
+nodeExporter:
+  nodeSelector:
+    agentpool: system
+  daemonset:
+    maxUnavailable: 1
+    nodeSelector:
+      agentpool: system
+
+prometheus-node-exporter:
+  nodeSelector:
+    agentpool: system
+
+alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-config
+
+grafana:
+  # Password managed via Azure Key Vault → ExternalSecret → K8s Secret
+  existingSecret: grafana-admin-password
+  
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL # Search for configmaps in all namespaces with label grafana_dashboard
+  
+  # Configure Loki datasource automatically in Grafana
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki-stack.monitoring.svc.cluster.local:3100
+      version: 1
+      isDefault: false
+    - name: Jaeger
+      type: jaeger
+      access: proxy
+      url: http://jaeger-query.monitoring.svc.cluster.local:80
+      isDefault: false

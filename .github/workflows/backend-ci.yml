@@ -1,0 +1,160 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "expensy_backend/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "expensy_backend/**"
+
+  workflow_dispatch:
+
+env:
+  ACR_NAME: expensyacrprod
+  ACR_LOGIN_SERVER: expensyacrprod.azurecr.io
+  IMAGE_NAME: expensyacrprod.azurecr.io/expensy-backend
+
+jobs:
+  ci:
+    name: Build · Scan · Push · Sign
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit gitops manifest update
+      id-token: write   # needed for Azure OIDC and Cosign keyless
+
+    steps:
+      # ── 1. Checkout ───────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed by SonarCloud
+
+      - name: Azure login with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CI_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # ── 2. Setup Node.js ──────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: expensy_backend/package-lock.json
+
+      # ── 3. Install dependencies ───────────────────────────────────────────
+      - name: Install dependencies
+        working-directory: expensy_backend
+        run: npm ci
+
+      # ── 4. SonarCloud scan ────────────────────────────────────────────────
+      - name: Analyze with SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        with:
+          projectBaseDir: expensy_backend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN2 }}
+          SONAR_HOST_URL: https://sonarcloud.io
+
+      # ── 5. Snyk dependency scan ───────────────────────────────────────────
+      - name: Snyk – Scan dependencies
+        uses: snyk/actions/node@master
+        with:
+          args: --file=expensy_backend/package.json --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Test (unit)
+        working-directory: expensy_backend
+        run: npm test
+
+      - name: Build (TypeScript → dist/)
+        working-directory: expensy_backend
+        run: npm run build
+
+      # ── 6. Docker build ───────────────────────────────────────────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          context: expensy_backend
+          file: expensy_backend/Dockerfile
+          platforms: linux/amd64
+          push: false   # push happens after Trivy scan
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          load: true    # load into local daemon for Trivy
+
+      # ── 7. Trivy image scan ───────────────────────────────────────────────
+      - name: Trivy – Scan image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
+
+      # ── 8. Login to ACR & push image ──────────────────────────────────────
+      - name: Login to ACR
+        run: az acr login --name "${ACR_NAME}"
+
+      - name: Push Docker image
+        id: docker_push
+        uses: docker/build-push-action@v6
+        with:
+          context: expensy_backend
+          file: expensy_backend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      # ── 9. Install Cosign & sign image ────────────────────────────────────
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image with Cosign (keyless)
+        env:
+          IMAGE_DIGEST: ${{ steps.docker_push.outputs.digest }}
+        run: |
+          cosign sign --yes "${{ env.IMAGE_NAME }}@${IMAGE_DIGEST}"
+
+      # ── 10. Update GitOps manifest ────────────────────────────────────────
+      - name: Update image tag in GitOps manifest
+        env:
+          GIT_SHA: ${{ github.sha }}
+          MANIFEST: gitops/expensy/backend/backend-deployment.yaml
+        run: |
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::warning::$MANIFEST not found — skipping GitOps update."
+            exit 0
+          fi
+
+          # Обновляем тег образа в манифесте
+          sed -i "s|image: ${{ env.IMAGE_NAME }}:.*|image: ${{ env.IMAGE_NAME }}:${GIT_SHA}|g" "$MANIFEST"
+
+          # Настраиваем системного бота Git
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add "$MANIFEST"
+          
+          # Если изменений нет (например, повторный запуск джобы), выходим без ошибки
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          
+          git commit -m "chore(gitops): update  backend image to ${GIT_SHA}"
+          
+          # Защита от Race Condition: делаем pull с ребейзом перед пушем.
+          # Если в это время засинкался бэкенд, мы просто аккуратно встанем поверх его коммита.
+          git pull --rebase origin main
+          
+          # Пушим изменения обратно в репозиторий
+          git push origin main

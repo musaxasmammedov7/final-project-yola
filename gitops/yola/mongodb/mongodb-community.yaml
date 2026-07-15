@@ -1,0 +1,79 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: yola-mongo
+  namespace: yola
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  members: 1
+  type: ReplicaSet
+  version: "7.0.11"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: root
+      db: admin
+      passwordSecretRef:
+        name: mongodb-root-password-secret
+      roles:
+        - name: root
+          db: admin
+      scramCredentialsSecretName: yola-mongo-root-scram
+    - name: yola
+      db: yola
+      passwordSecretRef:
+        name: mongodb-root-password-secret
+      roles:
+        - name: readWrite
+          db: yola
+      scramCredentialsSecretName: yola-mongo-yola-scram
+  statefulSet:
+    spec:
+      template:
+        spec:
+          initContainers:
+            - name: mongod-posthook
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 200Mi
+            - name: mongodb-agent-readinessprobe
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 200Mi
+          containers:
+            - name: mongod
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+            - name: mongodb-agent
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: managed-csi-premium
+            resources:
+              requests:
+                storage: 5Gi

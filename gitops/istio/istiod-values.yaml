@@ -1,0 +1,14 @@
+# Helm values for istiod
+meshConfig:
+  defaultConfig:
+    tracing:
+      sampling: 100.0
+  enableTracing: true
+  extensionProviders:
+    - name: zipkin
+      zipkin:
+        service: jaeger-collector.monitoring.svc.cluster.local
+        port: 9411
+  defaultProviders:
+    tracing:
+      - zipkin

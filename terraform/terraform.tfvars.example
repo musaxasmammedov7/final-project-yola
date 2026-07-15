@@ -1,0 +1,20 @@
+# terraform.tfvars.example
+# Main Terraform expects Pipeline A to create the resource group and identities.
+
+resource_group_name = "yola-rg"
+acr_name            = "yolaprod"
+aks_name            = "yola-aks"
+aks_dns_prefix      = "yola"
+key_vault_name      = "yola-kv-prod"
+public_ip_name      = "yola-istio-ingress-pip"
+
+  public_ip_domain_name_label = "yola-istio-ingress"
+github_ci_identity_name        = "yola-github-ci"
+external_secrets_identity_name = "yola-external-secrets"
+
+tags = {
+  Project     = "Expensy"
+  Environment = "Production"
+  ManagedBy   = "Terraform"
+  Team        = "DevOps"
+}

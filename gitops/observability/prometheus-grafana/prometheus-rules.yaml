@@ -1,0 +1,145 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: yola-alerts
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: yola.pod-health
+      rules:
+        - alert: PodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="yola"}[15m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🔴 CRASH LOOP: {{ $labels.pod }}"
+            description: "Pod {{ $labels.pod }} in {{ $labels.namespace }} is crash looping ({{ $value | humanize }}/min).\n\n🔧 Check: kubectl logs {{ $labels.pod }} -n {{ $labels.namespace }}"
+
+        - alert: PodNotReady
+          expr: kube_pod_status_ready{namespace="yola", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 NOT READY: {{ $labels.pod }}"
+            description: "Pod {{ $labels.pod }} in {{ $labels.namespace }} has been not ready for 5+ minutes.\n\n🔧 Check: kubectl describe pod {{ $labels.pod }} -n {{ $labels.namespace }}"
+
+        - alert: ContainerOOMKilled
+          expr: kube_pod_container_status_last_terminated_reason{namespace="yola", reason="OOMKilled"} > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🔴 OOM KILLED: {{ $labels.container }} in {{ $labels.pod }}"
+            description: "Container {{ $labels.container }} was killed — out of memory.\n\n🔧 Fix: Increase memory limit in deployment spec."
+
+    - name: yola.error-rate
+      rules:
+        - alert: HighErrorRate
+          expr: sum(rate(istio_requests_total{destination_workload_namespace="yola", response_code=~"5.*"}[5m])) by (destination_workload) / sum(rate(istio_requests_total{destination_workload_namespace="yola"}[5m])) by (destination_workload) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🔴 HIGH 5XX: {{ $labels.destination_workload }}"
+            description: "5xx error rate on {{ $labels.destination_workload }}: {{ $value | humanizePercentage }} (threshold: 5%).\n\n🔧 Check application logs and recent deployments."
+
+        - alert: HighLatencyP99
+          expr: histogram_quantile(0.99, sum(rate(istio_request_duration_milliseconds_bucket{destination_workload_namespace="yola"}[5m])) by (le, destination_workload)) > 2000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 SLOW RESPONSE: {{ $labels.destination_workload }}"
+            description: "P99 latency on {{ $labels.destination_workload }}: {{ $value | humanizeDuration }} (threshold: 2s).\n\n🔧 Check database queries and downstream dependencies."
+
+        - alert: HighClientErrorRate
+          expr: sum(rate(istio_requests_total{destination_workload_namespace="yola", response_code=~"4.*"}[5m])) by (destination_workload) / sum(rate(istio_requests_total{destination_workload_namespace="yola"}[5m])) by (destination_workload) > 0.10
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 HIGH 4XX: {{ $labels.destination_workload }}"
+            description: "4xx error rate on {{ $labels.destination_workload }}: {{ $value | humanizePercentage }} (threshold: 10%).\n\n🔧 Check input validation and client-side issues."
+
+    - name: yola.resource-usage
+      rules:
+        - alert: PersistentVolumeUsageHigh
+          expr: (kubelet_volume_stats_used_bytes{namespace="yola"} / kubelet_volume_stats_capacity_bytes{namespace="yola"}) > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 DISK HIGH: {{ $labels.persistentvolumeclaim }}"
+            description: "PVC {{ $labels.persistentvolumeclaim }} is {{ $value | humanizePercentage }} full.\n\n🔧 Expand volume or clean up data."
+
+        - alert: PersistentVolumeUsageCritical
+          expr: (kubelet_volume_stats_used_bytes{namespace="yola"} / kubelet_volume_stats_capacity_bytes{namespace="yola"}) > 0.95
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🔴 DISK CRITICAL: {{ $labels.persistentvolumeclaim }}"
+            description: "PVC {{ $labels.persistentvolumeclaim }} is {{ $value | humanizePercentage }} full — IMMINENT RISK.\n\n🔧 Expand volume immediately or services will crash."
+
+        - alert: ContainerCPUThrottling
+          expr: rate(container_cpu_cfs_throttled_periods_total{namespace="yola"}[5m]) / rate(container_cpu_cfs_periods_total{namespace="yola"}[5m]) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 CPU THROTTLED: {{ $labels.pod }}"
+            description: "Container {{ $labels.container }} in {{ $labels.pod }} is CPU-throttled {{ $value | humanizePercentage }} of the time.\n\n🔧 Increase CPU limit or optimize code."
+
+        - alert: ContainerMemoryNearLimit
+          expr: container_memory_working_set_bytes{namespace="yola"} / container_spec_memory_limit_bytes{namespace="yola"} > 0.90
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 MEMORY HIGH: {{ $labels.container }}"
+            description: "Container {{ $labels.container }} in {{ $labels.pod }} is using {{ $value | humanizePercentage }} of memory limit.\n\n🔧 OOMKill risk — increase memory limit."
+
+    - name: yola.mongodb
+      rules:
+        - alert: MongoDBReplicaSetDown
+          expr: mongodb_cluster_replset_members_health{namespace="yola"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🔴 MONGO DOWN: {{ $labels.name }}"
+            description: "MongoDB replica set member {{ $labels.name }} is unhealthy in {{ $labels.namespace }}.\n\n🔧 Check: kubectl get pods -n yola -l app=mongodb"
+
+        - alert: MongoDBHighConnections
+          expr: mongodb_connections{namespace="yola", state="current"} > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 MONGO CONNECTIONS: {{ $value }} active"
+            description: "MongoDB has {{ $value }} active connections (threshold: 80).\n\n🔧 Possible connection leak — check application pool settings."
+
+    - name: yola.deployment
+      rules:
+        - alert: DeploymentReplicasMismatch
+          expr: kube_deployment_status_replicas_available{namespace="yola"} / kube_deployment_spec_replicas{namespace="yola"} < 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 REPLICAS DOWN: {{ $labels.deployment }}"
+            description: "Deployment {{ $labels.deployment }} in {{ $labels.namespace }} is below desired count for 10+ minutes.\n\n🔧 Check: kubectl get deployment {{ $labels.deployment }} -n {{ $labels.namespace }}"
+
+        - alert: HPAAtMaxReplicas
+          expr: kube_horizontalpodautoscaler_status_current_replicas{namespace="yola"} == kube_horizontalpodautoscaler_spec_max_replicas{namespace="yola"}
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "🟡 HPA MAXED: {{ $labels.horizontalpodautoscaler }}"
+            description: "HPA {{ $labels.horizontalpodautoscaler }} at max capacity for 15+ minutes.\n\n🔧 Increase max replicas or optimize application."

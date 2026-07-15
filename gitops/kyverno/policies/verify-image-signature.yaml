@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://www.schemastore.org/any.json
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signature
+  annotations:
+    policies.kyverno.io/title: Verify Image Signature
+    policies.kyverno.io/category: Software Supply Chain Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/description: >-
+      Verifies Expensy images in ACR with Cosign keyless signatures produced by
+      GitHub Actions through Fulcio and Rekor. No cosign.pub key is required.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: verify-backend-keyless-signature
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "yolaprod.azurecr.io/yola-backend:*"
+          mutateDigest: true
+          attestors:
+            - count: 1
+              entries:
+                - keyless:
+                    subject: "https://github.com/musaxasmammedov7/final-project-yola/.github/workflows/backend-ci.yml@refs/heads/main"
+                    issuer: "https://token.actions.githubusercontent.com"
+                    rekor:
+                      url: https://rekor.sigstore.dev
+
+    - name: verify-frontend-keyless-signature
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "yolaprod.azurecr.io/yola-frontend:*"
+          mutateDigest: true
+          attestors:
+            - count: 1
+              entries:
+                - keyless:
+                    subject: "https://github.com/musaxasmammedov7/final-project-yola/.github/workflows/frontend-ci.yml@refs/heads/main"
+                    issuer: "https://token.actions.githubusercontent.com"
+                    rekor:
+                      url: https://rekor.sigstore.dev
