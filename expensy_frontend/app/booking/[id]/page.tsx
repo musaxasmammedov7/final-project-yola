@@ -1,32 +1,75 @@
 "use client";
 import Icon from "@/components/Icon";
-import { use, useState, Suspense } from "react";
+import { use, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import DriverAvatar from "@/components/DriverAvatar";
-import { RIDES } from "@/lib/data";
+import { fetchRide, postBooking, calcSegmentPrice, saveBookingId, type ApiRide } from "@/lib/api";
 
 function Booking({ id }: { id: string }) {
   const params = useSearchParams();
   const router = useRouter();
-  const ride = RIDES.find(r => r.id === id);
-  const [step, setStep] = useState<"details" | "payment" | "success">("details");
-  const [name, setName] = useState("Aga Haciyev");
-  const [phone, setPhone] = useState("+994 50 123 4567");
-  const [card, setCard] = useState("");
+
+  const [ride, setRide]     = useState<ApiRide | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [step, setStep]     = useState<"details" | "payment" | "paying" | "success">("details");
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [payError, setPayError]   = useState<string | null>(null);
+
+  const [name,   setName]   = useState("Aga Haciyev");
+  const [phone,  setPhone]  = useState("+994 50 123 4567");
+  const [card,   setCard]   = useState("");
   const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
+  const [cvv,    setCvv]    = useState("");
+
+  useEffect(() => {
+    fetchRide(id)
+      .then(r => { setRide(r); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return (
+    <div className="min-h-screen bg-[#F5F5FF]"><Navbar />
+      <div className="max-w-2xl mx-auto px-4 py-12">
+        <div className="h-32 bg-white rounded-2xl mb-4 animate-skeleton" />
+        <div className="h-48 bg-white rounded-2xl animate-skeleton" />
+      </div>
+    </div>
+  );
 
   if (!ride) return (
     <div className="min-h-screen bg-[#F5F5FF]"><Navbar /><div className="max-w-2xl mx-auto px-4 py-16 text-center text-slate-400">Ride not found</div></div>
   );
 
-  const from = params.get("from") || ride.waypoints[0].city;
-  const to = params.get("to") || ride.waypoints[ride.waypoints.length - 1].city;
-  const date = params.get("date") || ride.date;
+  const from  = params.get("from") || ride.waypoints[0].city;
+  const to    = params.get("to")   || ride.waypoints[ride.waypoints.length - 1].city;
+  const date  = params.get("date") || ride.date;
   const seats = Number(params.get("seats") || 1);
-  const total = ride.price * seats;
+  const pricePerSeat = calcSegmentPrice(ride, from, to);
+  const total = pricePerSeat * seats;
+
+  async function pay() {
+    setStep("paying");
+    setPayError(null);
+    try {
+      const booking = await postBooking({
+        rideId: ride!._id,
+        passengerName: name,
+        passengerPhone: phone,
+        fromCity: from,
+        toCity: to,
+        date,
+        seats,
+      });
+      saveBookingId(booking._id);
+      setBookingId(booking._id);
+      setStep("success");
+    } catch (err: any) {
+      setPayError(err.message ?? "Payment failed. Try again.");
+      setStep("payment");
+    }
+  }
 
   if (step === "success") {
     return (
@@ -36,16 +79,16 @@ function Booking({ id }: { id: string }) {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-200">
             <Icon name="checkmark-circle" style={{ fontSize: "44px", color: "#16A34A" }} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">You&apos;re all set!</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">You're all set!</h1>
           <p className="text-slate-500 text-sm mb-8">Seat confirmed. Have a great trip!</p>
 
           <div className="bg-white rounded-2xl border border-green-100 shadow-sm p-6 text-left mb-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Trip summary</p>
             {[
-              { label: "Route", value: `${from} → ${to}` },
-              { label: "Date", value: date },
+              { label: "Route",     value: `${from} → ${to}` },
+              { label: "Date",      value: date },
               { label: "Departure", value: `${ride.departureTime} · ${ride.waypoints[0].detail ?? from}` },
-              { label: "Driver", value: ride.driver.name },
+              { label: "Driver",    value: ride.driverName },
             ].map(row => (
               <div key={row.label} className="flex justify-between text-sm mb-2">
                 <span className="text-slate-500">{row.label}</span>
@@ -90,9 +133,9 @@ function Booking({ id }: { id: string }) {
           {(["details", "payment"] as const).map((s, i) => (
             <div key={s} className="flex items-center gap-2 flex-1">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                step === s ? "bg-indigo-700 text-white" : step === "payment" && s === "details" ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"
+                step === s ? "bg-indigo-700 text-white" : (step === "payment" || step === "paying") && s === "details" ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"
               }`}>
-                {step === "payment" && s === "details"
+                {(step === "payment" || step === "paying") && s === "details"
                   ? <Icon name="checkmark" style={{ fontSize: "14px" }} />
                   : i + 1}
               </div>
@@ -105,9 +148,9 @@ function Booking({ id }: { id: string }) {
         {/* Trip summary */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <DriverAvatar name={ride.driver.name} size={40} />
+            <DriverAvatar name={ride.driverName} size={40} />
             <div>
-              <p className="text-sm font-semibold text-slate-900">{ride.driver.name}</p>
+              <p className="text-sm font-semibold text-slate-900">{ride.driverName}</p>
               <p className="text-xs text-slate-400">{ride.car}</p>
             </div>
             <div className="ml-auto text-right">
@@ -139,7 +182,7 @@ function Booking({ id }: { id: string }) {
           </div>
         )}
 
-        {step === "payment" && (
+        {(step === "payment" || step === "paying") && (
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Payment</p>
             <div className="flex flex-col gap-4">
@@ -161,6 +204,7 @@ function Booking({ id }: { id: string }) {
                 </div>
               </div>
             </div>
+            {payError && <p className="text-xs text-red-500 mt-3 text-center">{payError}</p>}
             <p className="text-xs text-slate-400 mt-4 text-center flex items-center justify-center gap-1">
               <Icon name="lock-closed-outline" style={{ fontSize: "13px" }} />
               Demo only — no real payment processed
@@ -169,10 +213,15 @@ function Booking({ id }: { id: string }) {
         )}
 
         <button
-          onClick={() => step === "details" ? setStep("payment") : setStep("success")}
-          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors"
+          onClick={() => step === "details" ? setStep("payment") : pay()}
+          disabled={step === "paying"}
+          className="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-bold py-4 rounded-2xl text-sm transition-all disabled:opacity-60"
         >
-          {step === "details" ? "Continue to payment →" : `Pay ₼${total} · Confirm booking`}
+          {step === "paying"
+            ? "Confirming…"
+            : step === "details"
+            ? "Continue to payment →"
+            : `Pay ₼${total} · Confirm booking`}
         </button>
       </div>
     </div>

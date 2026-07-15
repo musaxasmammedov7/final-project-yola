@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth";
 import BottomNav from "@/components/BottomNav";
+import ChatBot from "@/components/ChatBot";
 
 export const metadata: Metadata = {
   title: "Yola",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           {children}
           <BottomNav />
+          <ChatBot />
         </AuthProvider>
       </body>
     </html>

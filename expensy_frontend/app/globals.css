@@ -9,3 +9,88 @@ body {
   background: #EFF6FF;
   color: #0F172A;
 }
+
+/* ── Keyframes ─────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.92) translateY(6px); }
+  60%  { transform: scale(1.02) translateY(-1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Animation utility classes ─────────────────────────── */
+.animate-fade-up   { animation: fade-up 0.4s ease both; }
+.animate-fade-in   { animation: fade-in 0.3s ease both; }
+.animate-pop-in    { animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-slide-right { animation: slide-in-right 0.3s ease both; }
+.animate-slide-left  { animation: slide-in-left  0.3s ease both; }
+.animate-skeleton  { animation: skeleton-pulse 1.5s ease-in-out infinite; }
+
+/* Stagger delays for lists */
+.stagger-1  { animation-delay: 0.05s; }
+.stagger-2  { animation-delay: 0.10s; }
+.stagger-3  { animation-delay: 0.15s; }
+.stagger-4  { animation-delay: 0.20s; }
+.stagger-5  { animation-delay: 0.25s; }
+.stagger-6  { animation-delay: 0.30s; }
+
+/* ── Global button feel ─────────────────────────────────── */
+button, a[class*="rounded"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Azerbaijani carpet border ──────────────────────────── */
+.carpet-border {
+  position: relative;
+}
+.carpet-border::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.55) 0px,   rgba(255,255,255,0.55) 3px,
+      transparent              3px,  transparent              6px,
+      rgba(255,255,255,0.3)  6px,   rgba(255,255,255,0.3)  9px,
+      transparent              9px,  transparent             12px,
+      rgba(255,255,255,0.55) 12px,  rgba(255,255,255,0.55) 15px,
+      transparent             15px,  transparent             18px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent             0px,  transparent              9px,
+      rgba(255,255,255,0.2)  9px,   rgba(255,255,255,0.2) 10px,
+      transparent            10px,  transparent             19px
+    );
+  background-size: 18px 6px, 18px 6px;
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+

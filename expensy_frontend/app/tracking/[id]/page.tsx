@@ -27,20 +27,19 @@ function Tracking({ id }: { id: string }) {
   useEffect(() => {
     if (progress >= 1) return;
     const interval = setInterval(() => {
-      setProgress(p => {
-        const next = Math.min(p + 0.003, 1);
-        // update status based on progress
-        if (next > 0.08 && statusIdx < 1) setStatusIdx(1);
-        if (next > 0.2  && statusIdx < 2) setStatusIdx(2);
-        if (next > 0.85 && statusIdx < 3) setStatusIdx(3);
-        if (next >= 1   && statusIdx < 4) setStatusIdx(4);
-        // countdown ETA
-        setEta(Math.round((1 - next) * 42));
-        return next;
-      });
+      setProgress(p => Math.min(p + 0.003, 1));
     }, 200);
     return () => clearInterval(interval);
-  }, [progress, statusIdx]);
+  }, [progress >= 1]);
+
+  // Update status and ETA when progress changes
+  useEffect(() => {
+    setEta(Math.round((1 - progress) * 42));
+    if (progress >= 1   && statusIdx < 4) { setStatusIdx(4); return; }
+    if (progress > 0.85 && statusIdx < 3) { setStatusIdx(3); return; }
+    if (progress > 0.2  && statusIdx < 2) { setStatusIdx(2); return; }
+    if (progress > 0.08 && statusIdx < 1) { setStatusIdx(1); }
+  }, [progress]);
 
   const status = STATUSES[statusIdx];
   const from = ride.waypoints[0];
