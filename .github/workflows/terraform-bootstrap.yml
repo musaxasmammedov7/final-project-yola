@@ -8,8 +8,8 @@ permissions:
   id-token: write
 
 env:
-  RESOURCE_GROUP_NAME: expensy-rg
-  AKS_NAME: expensy-aks
+  RESOURCE_GROUP_NAME: yola-rg
+  AKS_NAME: yola-aks
 
 jobs:
   argocd-bootstrap:
