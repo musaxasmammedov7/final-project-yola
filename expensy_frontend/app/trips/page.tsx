@@ -19,7 +19,7 @@ export default function TripsPage() {
 
   useEffect(() => {
     const ids = storedBookingIds();
-    if (ids.length === 0) { setLoading(false); return; }
+    if (ids.length === 0) return;
     Promise.all(ids.map(id => fetchBooking(id).catch(() => null)))
       .then(results => {
         setBookings(results.filter(Boolean) as BookingState[]);

@@ -34,7 +34,7 @@ function FlyTo({ target }: { target: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
     if (target) map.flyTo(target, 15, { duration: 1.2 });
-  }, [target]);
+  }, [target, map]);
   return null;
 }
 
@@ -48,7 +48,7 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
   const [lat, setLat] = useState(BAKU[0]);
   const [lng, setLng] = useState(BAKU[1]);
   const [place, setPlace] = useState("Baku");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [moving, setMoving] = useState(false);
   const [query, setQuery] = useState("");
   const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
@@ -58,7 +58,6 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
   // reverse geocode when map stops
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     const timer = setTimeout(() => {
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`)
         .then(r => r.json())

@@ -50,13 +50,11 @@ function Results() {
   const [sort, setSort]       = useState<"price" | "time" | "rating">("price");
   const [maxPrice, setMaxPrice] = useState(20);
   const [rides, setRides]     = useState<ApiRide[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !!(from && to));
   const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
-    if (!from || !to) { setLoading(false); return; }
-    setLoading(true);
-    setError(null);
+    if (!from || !to) return;
     searchRides(from, to, date, seats)
       .then(r => { setRides(r); setLoading(false); })
       .catch(() => { setError("Could not load rides. Check your connection."); setLoading(false); });
@@ -126,7 +124,7 @@ function Results() {
           <div className="text-center py-16 text-slate-400 animate-fade-up">
             <Icon name="car-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 16px" }} />
             <div className="mb-1">
-              <p className="font-semibold text-slate-600 text-base italic">"{proverb.az}"</p>
+              <p className="font-semibold text-slate-600 text-base italic">{'\u201C'}{proverb.az}{'\u201D'}</p>
               <p className="text-xs text-slate-400 mt-0.5">{proverb.en}</p>
             </div>
             <p className="text-sm text-slate-400 mt-4">Try a different date or adjust the price filter</p>

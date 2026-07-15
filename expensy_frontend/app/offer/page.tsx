@@ -11,6 +11,18 @@ const PinPicker = dynamic(() => import("@/components/PinPicker"), { ssr: false }
 
 type PickerTarget = { kind: "from" | "to" | "stop"; index?: number };
 
+function Field({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 px-5 py-4">
+      <Icon name={icon} style={{ fontSize: "20px", color: "#4338CA", flexShrink: 0 }} />
+      <div className="flex-1">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function OfferPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -74,16 +86,6 @@ export default function OfferPage() {
       </div>
     );
   }
-
-  const Field = ({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) => (
-    <div className="flex items-center gap-3 px-5 py-4">
-      <Icon name={icon} style={{ fontSize: "20px", color: "#4338CA", flexShrink: 0 }} />
-      <div className="flex-1">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-[#F5F5FF]">

@@ -20,8 +20,6 @@ const STATUSES = [
 function Tracking({ id }: { id: string }) {
   const ride = RIDES.find(r => r.id === id) ?? RIDES[0];
   const [progress, setProgress] = useState(0);       // 0–1 along route
-  const [statusIdx, setStatusIdx] = useState(0);
-  const [eta, setEta] = useState(42);               // minutes
 
   // Simulate car moving
   useEffect(() => {
@@ -32,14 +30,8 @@ function Tracking({ id }: { id: string }) {
     return () => clearInterval(interval);
   }, [progress >= 1]);
 
-  // Update status and ETA when progress changes
-  useEffect(() => {
-    setEta(Math.round((1 - progress) * 42));
-    if (progress >= 1   && statusIdx < 4) { setStatusIdx(4); return; }
-    if (progress > 0.85 && statusIdx < 3) { setStatusIdx(3); return; }
-    if (progress > 0.2  && statusIdx < 2) { setStatusIdx(2); return; }
-    if (progress > 0.08 && statusIdx < 1) { setStatusIdx(1); }
-  }, [progress]);
+  const eta = Math.round((1 - progress) * 42);
+  const statusIdx = progress >= 1 ? 4 : progress > 0.85 ? 3 : progress > 0.2 ? 2 : progress > 0.08 ? 1 : 0;
 
   const status = STATUSES[statusIdx];
   const from = ride.waypoints[0];
