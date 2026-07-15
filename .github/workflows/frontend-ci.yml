@@ -63,7 +63,6 @@ jobs:
       # ── 4. SonarCloud — статический анализ кода ───────────────────────────
       - name: SonarCloud – Code analysis
         uses: SonarSource/sonarqube-scan-action@v5.0.0
-        continue-on-error: true
         with:
           projectBaseDir: expensy_frontend
         env:
@@ -77,7 +76,6 @@ jobs:
       # exit-code встроен в severity-threshold — падает только на HIGH и выше.
       - name: Snyk – Scan dependencies
         uses: snyk/actions/node@master
-        continue-on-error: true
         with:
           args: --file=expensy_frontend/package.json --severity-threshold=high
         env:

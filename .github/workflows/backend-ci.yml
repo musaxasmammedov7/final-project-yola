@@ -55,7 +55,6 @@ jobs:
       # ── 4. SonarCloud scan ────────────────────────────────────────────────
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarqube-scan-action@v5.0.0
-        continue-on-error: true
         with:
           projectBaseDir: expensy_backend
         env:
@@ -66,7 +65,6 @@ jobs:
       # ── 5. Snyk dependency scan ───────────────────────────────────────────
       - name: Snyk – Scan dependencies
         uses: snyk/actions/node@master
-        continue-on-error: true
         with:
           args: --file=expensy_backend/package.json --severity-threshold=high
         env:
