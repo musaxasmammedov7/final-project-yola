@@ -94,9 +94,10 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight leading-tight">Where are you<br />headed today?</h1>
 
             <div className="mt-3">
-              <p className="text-indigo-100 text-sm font-medium italic" suppressHydrationWarning>"{proverb.az}"</p>
+              <p className="text-indigo-100 text-sm font-medium italic" suppressHydrationWarning>{'\u201C'}{proverb.az}{'\u201D'}</p>
               <p className="text-indigo-300 text-xs mt-0.5" suppressHydrationWarning>{proverb.en}</p>
             </div>
+          </div>
 
           {/* Baku skyline silhouette */}
           <svg viewBox="0 0 420 80" className="w-full" aria-hidden="true" style={{ opacity: 0.18, display: "block" }}>
