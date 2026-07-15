@@ -76,7 +76,6 @@ jobs:
       # exit-code встроен в severity-threshold — падает только на HIGH и выше.
       - name: Snyk – Scan dependencies
         uses: snyk/actions/node@master
-        continue-on-error: true
         with:
           args: --file=expensy_frontend/package.json --severity-threshold=high
         env:
