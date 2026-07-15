@@ -144,8 +144,8 @@ Managed with Terraform (28 resources):
 │   └── kyverno/               # Security policies
 │
 ├── .github/workflows/         # 6 CI/CD pipelines
-├── expensy_backend/           # Backend source (Node.js/Express)
-├── expensy_frontend/          # Frontend source (Next.js)
+├── backend/           # Backend source (Node.js/Express)
+├── frontend/          # Frontend source (Next.js)
 ├── load-test/                 # k6 load testing
 └── docs/                      # Documentation + ADRs
 ```

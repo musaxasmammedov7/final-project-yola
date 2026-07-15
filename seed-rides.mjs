@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Seed MongoDB with initial rides via the backend API.
 // Usage: node seed-rides.mjs [API_URL]
-// Default API_URL: https://expensy-istio-ingress.swedencentral.cloudapp.azure.com
+// Default API_URL: https://yola-app.swedentricentral.cloudapp.azure.com
 
-const API_URL = process.argv[2] ?? "https://expensy-istio-ingress.swedencentral.cloudapp.azure.com";
+const API_URL = process.argv[2] ?? "https://yola-app.swedentricentral.cloudapp.azure.com";
 
 const RIDES = [
   {

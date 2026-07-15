@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="External Architecture" id="ext-arch">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Yola — External Architecture" style="text;html=1;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- User -->
+        <mxCell id="user" value="👤&#xa;User" style="shape=mxgraph.basic.user;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="200" width="80" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- DNS -->
+        <mxCell id="dns" value="Azure DNS&#xa;yola-app.swedencentral&#xa;.cloudapp.azure.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;arcSize=30;" vertex="1" parent="1">
+          <mxGeometry x="250" y="210" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Load Balancer -->
+        <mxCell id="lb" value="Azure Load Balancer&#xa;Public IP: 4.166.241.121" style="shape=mxgraph.azure3.azure_load_balancer;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="520" y="200" width="80" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- AKS Cluster boundary -->
+        <mxCell id="cluster" value="AKS Cluster — yola-aks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#82b366;fontSize=13;fontStyle=1;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="80" width="860" height="720" as="geometry" />
+        </mxCell>
+
+        <!-- Istio Ingress -->
+        <mxCell id="ingress" value="Istio IngressGateway&#xa;TLS Termination&#xa;(cert-manager + Let's Encrypt)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="200" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- VirtualService -->
+        <mxCell id="vs" value="VirtualService&#xa;yola-routes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="210" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend Service -->
+        <mxCell id="frontend" value="Frontend&#xa;ClusterIP :3000&#xa;2/2 Running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="380" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Backend Service -->
+        <mxCell id="backend" value="Backend API&#xa;ClusterIP :5000&#xa;2/2 Running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="500" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- MongoDB -->
+        <mxCell id="mongo" value="MongoDB&#xa;ClusterIP :27017&#xa;2/3 Running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="500" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Redis -->
+        <mxCell id="redis" value="Redis&#xa;ClusterIP :6379&#xa;2/2 Running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="380" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Azure Resources Box -->
+        <mxCell id="azurebox" value="Azure Resources (yola-rg)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#d6b656;fontSize=12;fontStyle=1;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="620" width="860" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- ACR -->
+        <mxCell id="acr" value="ACR&#xa;yolaprod" style="shape=mxgraph.azure3.azure_container_registry;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="740" y="650" width="80" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Key Vault -->
+        <mxCell id="kv" value="Key Vault&#xa;yola-kv-prod" style="shape=mxgraph.azure3.azure_key_vault;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="900" y="650" width="80" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- OpenAI -->
+        <mxCell id="openai" value="Azure OpenAI&#xa;yola-openai" style="shape=mxgraph.azure3.azure_openai;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="650" width="80" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Managed Identities -->
+        <mxCell id="identities" value="Managed Identities&#xa;yola-terraform / yola-github-ci&#xa;yola-external-secrets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="670" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: User flow -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;strokeColor=#333333;" edge="1" source="user" target="dns" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;strokeColor=#333333;" edge="1" source="dns" target="lb" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;strokeColor=#333333;" edge="1" source="lb" target="ingress" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;strokeColor=#333333;" edge="1" source="ingress" target="vs" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: Services -->
+        <mxCell id="a5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1;strokeColor=#82b366;" edge="1" source="vs" target="frontend" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1;strokeColor=#82b366;" edge="1" source="vs" target="backend" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1;strokeColor=#d6b656;" edge="1" source="backend" target="mongo" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1;strokeColor=#d6b656;" edge="1" source="backend" target="redis" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
