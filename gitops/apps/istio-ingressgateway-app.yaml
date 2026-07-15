@@ -31,10 +31,6 @@ spec:
             memory: 1024Mi
         service:
           type: LoadBalancer
-          annotations:
-            # Привязка к конкретному Azure Public IP
-            service.beta.kubernetes.io/azure-pip-name: yola-istio-ingress-pip
-            service.beta.kubernetes.io/azure-load-balancer-resource-group: yola-rg
           ports:
             - name: status-port
               port: 15021
