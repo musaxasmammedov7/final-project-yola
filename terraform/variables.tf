@@ -97,7 +97,7 @@ variable "public_ip_name" {
 variable "public_ip_domain_name_label" {
   description = "Azure DNS label for the Istio ingress public IP. Produces <label>.<region>.cloudapp.azure.com."
   type        = string
-  default     = "yola-istio-ingress"
+  default     = "yola-app"
 }
 
 variable "github_ci_identity_name" {
