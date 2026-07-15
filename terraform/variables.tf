@@ -43,7 +43,7 @@ variable "aks_node_vm_size" {
 variable "aks_node_count" {
   description = "AKS default node count."
   type        = number
-  default     = 2
+  default     = 3
 }
 
 variable "aks_node_min_count" {
@@ -55,7 +55,7 @@ variable "aks_node_min_count" {
 variable "aks_node_max_count" {
   description = "Maximum node count for cluster autoscaler."
   type        = number
-  default     = 2
+  default     = 3
 }
 
 variable "aks_os_disk_size_gb" {
