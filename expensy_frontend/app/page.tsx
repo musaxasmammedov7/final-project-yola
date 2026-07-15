@@ -34,7 +34,8 @@ export default function Home() {
   const router = useRouter();
   const greeting = timeGreeting();
 
-  const [proverb] = useState(() => PROVERBS[Math.floor(Math.random() * PROVERBS.length)]);
+  // ponytail: stable index so SSR and client pick the same proverb
+  const [proverb] = useState(() => PROVERBS[Math.floor(Date.now() / 86400000) % PROVERBS.length]);
   const [from, setFrom] = useState("Baku");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("2026-07-15");
