@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
 
 env:
-  ACR_NAME: expensyacrprod
-  ACR_LOGIN_SERVER: expensyacrprod.azurecr.io
-  IMAGE_NAME: expensyacrprod.azurecr.io/expensy-backend
+  ACR_NAME: yolaprod
+  ACR_LOGIN_SERVER: yolaprod.azurecr.io
+  IMAGE_NAME: yolaprod.azurecr.io/yola-backend
 
 jobs:
   ci:
@@ -131,7 +131,7 @@ jobs:
       - name: Update image tag in GitOps manifest
         env:
           GIT_SHA: ${{ github.sha }}
-          MANIFEST: gitops/expensy/backend/backend-deployment.yaml
+          MANIFEST: gitops/yola/backend/backend-deployment.yaml
         run: |
           if [ ! -f "$MANIFEST" ]; then
             echo "::warning::$MANIFEST not found — skipping GitOps update."
