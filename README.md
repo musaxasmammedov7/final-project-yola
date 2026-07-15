@@ -1,6 +1,6 @@
-# Yola — Expense Management Platform
+# Yola — Intercity Ride Sharing Platform
 
-A full-stack expense tracking application deployed on **Azure Kubernetes Service** with enterprise-grade DevOps, security, and observability.
+A full-stack carpooling web application deployed on **Azure Kubernetes Service** with enterprise-grade DevOps, security, and observability.
 
 ![Architecture](docs/yola-architecture.png)
 
@@ -8,12 +8,13 @@ A full-stack expense tracking application deployed on **Azure Kubernetes Service
 
 ## What is Yola?
 
-Yola is a web application for tracking and managing expenses across teams. Built with **Next.js** (frontend) and **Node.js/Express** (backend), it runs on a production-grade Kubernetes cluster with automated CI/CD, security policies, and AI-powered monitoring.
+Yola is a web application for finding and sharing rides between Azerbaijan cities. Built with **Next.js** (frontend) and **Node.js/Express** (backend), it runs on a production-grade Kubernetes cluster with automated CI/CD, security policies, and AI-powered monitoring.
 
 **Key features:**
-- Expense creation, tracking, and management
-- Team collaboration
-- Real-time dashboards
+- Offer and search rides between cities
+- Save favorite cars and set preferred routes
+- Split costs between passengers
+- Real-time ride tracking with maps
 - RESTful API with MongoDB backend
 - Redis caching for performance
 
@@ -136,7 +137,7 @@ Managed with Terraform (28 resources):
 │
 ├── gitops/                    # Kubernetes manifests
 │   ├── apps/                  # ArgoCD Applications (24 total)
-│   ├── expensy/               # App workloads (backend, frontend, mongo, redis)
+│   ├── yola/                 # App workloads (backend, frontend, mongo, redis)
 │   ├── istio/                 # Service mesh config
 │   ├── observability/         # Prometheus, Grafana, Loki, Jaeger
 │   ├── ai-agent/              # AI monitoring agent
@@ -144,7 +145,7 @@ Managed with Terraform (28 resources):
 │
 ├── .github/workflows/         # 6 CI/CD pipelines
 ├── expensy_backend/           # Backend source (Node.js/Express)
-├── expensy-frontend/          # Frontend source (Next.js)
+├── expensy_frontend/          # Frontend source (Next.js)
 ├── load-test/                 # k6 load testing
 └── docs/                      # Documentation + ADRs
 ```
@@ -191,7 +192,7 @@ kubectl port-forward svc/jaeger-query -n monitoring 16686:16686
 | **ArgoCD** | https://localhost:8443 |
 | **Kiali** | http://localhost:20001 |
 | **Jaeger** | http://localhost:16686 |
-| **Frontend** | https://expensy-istio-ingress.swedencentral.cloudapp.azure.com |
+| **Frontend** | https://yola-app.swedencentral.cloudapp.azure.com |
 
 ---
 
