@@ -58,8 +58,8 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
   // reverse geocode when map stops
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
     const timer = setTimeout(() => {
-      setLoading(true);
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`)
         .then(r => r.json())
         .then(d => {
@@ -108,7 +108,7 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
         <button
           onClick={() => onConfirm(place)}
           disabled={loading || place === "Unknown location"}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors flex-shrink-0"
+          className="bg-indigo-700 hover:bg-indigo-800 disabled:opacity-40 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors flex-shrink-0"
         >
           Confirm
         </button>
@@ -139,7 +139,7 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
         <button
           onClick={searchAddress}
           disabled={!query.trim() || searching}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-xs font-bold px-4 rounded-xl transition-colors flex-shrink-0"
+          className="bg-indigo-700 hover:bg-indigo-800 disabled:opacity-40 text-white text-xs font-bold px-4 rounded-xl transition-colors flex-shrink-0"
         >
           {searching ? "…" : "Go"}
         </button>
@@ -170,7 +170,7 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
             }}
           >
             <div
-              className="w-8 h-8 rounded-full bg-blue-600 border-4 border-white flex items-center justify-center"
+              className="w-8 h-8 rounded-full bg-indigo-700 border-4 border-white flex items-center justify-center"
               style={{
                 boxShadow: moving ? "none" : "0 4px 16px rgba(37,99,235,0.5)",
                 transition: "box-shadow 0.15s ease",
@@ -178,7 +178,7 @@ export default function PinPicker({ label, onConfirm, onClose }: Props) {
             >
               <div className="w-2 h-2 rounded-full bg-white" />
             </div>
-            <div className="w-0.5 h-5 bg-blue-600 rounded-full" />
+            <div className="w-0.5 h-5 bg-indigo-700 rounded-full" />
             <div
               className="bg-black/20 rounded-full mt-0.5"
               style={{ width: moving ? "6px" : "12px", height: "4px", transition: "width 0.15s ease" }}

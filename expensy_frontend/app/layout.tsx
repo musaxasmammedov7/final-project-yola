@@ -4,7 +4,7 @@ import { AuthProvider } from "@/context/auth";
 import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
-  title: "RideLink",
+  title: "Yola",
   description: "Intercity ride sharing",
 };
 

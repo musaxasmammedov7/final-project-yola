@@ -55,15 +55,15 @@ function Chat({ id }: { id: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF] flex flex-col">
+    <div className="min-h-screen bg-[#F5F5FF] flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
           <Link href={`/tracking/${id}`} className="text-slate-400 hover:text-slate-700 transition-colors">
             <Icon name="arrow-back-outline" style={{ fontSize: "22px" }} />
           </Link>
-          <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-            <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#2563EB" }} />
+          <div className="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+            <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#4338CA" }} />
           </div>
           <div className="flex-1">
             <p className="text-sm font-bold text-slate-900">{ride.driver.name}</p>
@@ -79,7 +79,7 @@ function Chat({ id }: { id: string }) {
       </div>
 
       {/* Route banner */}
-      <div className="bg-blue-600 text-white text-xs font-semibold text-center py-2 flex items-center justify-center gap-2">
+      <div className="bg-indigo-700 text-white text-xs font-semibold text-center py-2 flex items-center justify-center gap-2">
         <Icon name="location-outline" style={{ fontSize: "13px" }} />
         {ride.waypoints[0].city} → {ride.waypoints[ride.waypoints.length - 1].city} · {ride.date} {ride.departureTime}
       </div>
@@ -96,14 +96,14 @@ function Chat({ id }: { id: string }) {
         {messages.map(msg => (
           <div key={msg.id} className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}>
             {msg.from === "driver" && (
-              <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center mr-2 flex-shrink-0 self-end mb-1">
-                <Icon name="person-circle-outline" style={{ fontSize: "20px", color: "#2563EB" }} />
+              <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center mr-2 flex-shrink-0 self-end mb-1">
+                <Icon name="person-circle-outline" style={{ fontSize: "20px", color: "#4338CA" }} />
               </div>
             )}
             <div className={`max-w-[75%] ${msg.from === "me" ? "items-end" : "items-start"} flex flex-col gap-1`}>
               <div className={`px-4 py-2.5 rounded-2xl text-sm ${
                 msg.from === "me"
-                  ? "bg-blue-600 text-white rounded-br-sm"
+                  ? "bg-indigo-700 text-white rounded-br-sm"
                   : "bg-white text-slate-900 border border-slate-100 shadow-sm rounded-bl-sm"
               }`}>
                 {msg.text}
@@ -115,8 +115,8 @@ function Chat({ id }: { id: string }) {
 
         {typing && (
           <div className="flex justify-start">
-            <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center mr-2 flex-shrink-0 self-end mb-1">
-              <Icon name="person-circle-outline" style={{ fontSize: "20px", color: "#2563EB" }} />
+            <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center mr-2 flex-shrink-0 self-end mb-1">
+              <Icon name="person-circle-outline" style={{ fontSize: "20px", color: "#4338CA" }} />
             </div>
             <div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1">
               {[0, 1, 2].map(i => (
@@ -129,13 +129,13 @@ function Chat({ id }: { id: string }) {
       </div>
 
       {/* Quick replies */}
-      <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-[#F8FAFF] to-transparent pt-4 pb-2 px-4">
+      <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-[#F5F5FF] to-transparent pt-4 pb-2 px-4">
         <div className="max-w-2xl mx-auto flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {["I'm here 👋", "On my way", "5 min late", "Where are you?", "Thanks!"].map(q => (
             <button
               key={q}
               onClick={() => { setInput(q); }}
-              className="flex-shrink-0 bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full hover:border-blue-300 hover:text-blue-600 transition-colors shadow-sm"
+              className="flex-shrink-0 bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full hover:border-indigo-300 hover:text-indigo-700 transition-colors shadow-sm"
             >
               {q}
             </button>
@@ -147,7 +147,7 @@ function Chat({ id }: { id: string }) {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-3 pb-safe md:pb-3">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <input
-            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors"
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors"
             placeholder="Message…"
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -156,7 +156,7 @@ function Chat({ id }: { id: string }) {
           <button
             onClick={send}
             disabled={!input.trim()}
-            className="w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-40 flex-shrink-0"
+            className="w-11 h-11 rounded-full bg-indigo-700 hover:bg-indigo-800 transition-colors flex items-center justify-center disabled:opacity-40 flex-shrink-0"
           >
             <Icon name="send" style={{ fontSize: "18px", color: "#fff" }} />
           </button>

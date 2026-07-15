@@ -21,12 +21,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EFF6FF] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#EEF2FF] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            Ride<span className="text-blue-600">Link</span>
+            Ride<span className="text-indigo-700">Link</span>
           </h1>
           <p className="text-sm text-slate-400 mt-1">Intercity ride sharing</p>
         </div>
@@ -39,7 +39,7 @@ export default function LoginPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Email</label>
               <input
                 type="email"
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
@@ -49,19 +49,19 @@ export default function LoginPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Password</label>
               <input
                 type="password"
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
               />
             </div>
             <div className="flex justify-end">
-              <button type="button" className="text-xs text-blue-600 font-semibold hover:underline">Forgot password?</button>
+              <button type="button" className="text-xs text-indigo-700 font-semibold hover:underline">Forgot password?</button>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-60 mt-2"
+              className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-60 mt-2"
             >
               {loading ? "Signing in…" : "Sign in"}
             </button>
@@ -75,7 +75,7 @@ export default function LoginPage() {
 
           <button
             onClick={() => { setLoading(true); setTimeout(() => { login({ name: "Aga Haciyev", email: "aga@gmail.com" }); router.push("/"); }, 800); }}
-            className="w-full border border-slate-200 rounded-2xl py-3.5 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
+            className="w-full border border-slate-200 rounded-2xl py-3.5 text-sm font-semibold text-slate-700 hover:border-indigo-300 hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4"/>
@@ -89,7 +89,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-slate-500 mt-6">
           No account?{" "}
-          <Link href="/register" className="text-blue-600 font-semibold hover:underline">Sign up</Link>
+          <Link href="/register" className="text-indigo-700 font-semibold hover:underline">Sign up</Link>
         </p>
       </div>
     </div>

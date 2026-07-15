@@ -23,11 +23,11 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EFF6FF] flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-[#EEF2FF] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            Ride<span className="text-blue-600">Link</span>
+            Ride<span className="text-indigo-700">Link</span>
           </h1>
           <p className="text-sm text-slate-400 mt-1">Intercity ride sharing</p>
         </div>
@@ -46,7 +46,7 @@ export default function RegisterPage() {
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">{f.label}</label>
                 <input
                   type={f.type}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors"
                   value={f.value}
                   onChange={e => f.set(e.target.value)}
                   placeholder={f.placeholder}
@@ -57,14 +57,14 @@ export default function RegisterPage() {
 
             <p className="text-xs text-slate-400 leading-relaxed">
               By signing up you agree to our{" "}
-              <button type="button" className="text-blue-600 font-semibold hover:underline">Terms</button> and{" "}
-              <button type="button" className="text-blue-600 font-semibold hover:underline">Privacy Policy</button>.
+              <button type="button" className="text-indigo-700 font-semibold hover:underline">Terms</button> and{" "}
+              <button type="button" className="text-indigo-700 font-semibold hover:underline">Privacy Policy</button>.
             </p>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-60 mt-2"
+              className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-60 mt-2"
             >
               {loading ? "Creating account…" : "Create account"}
             </button>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-slate-500 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link>
+          <Link href="/login" className="text-indigo-700 font-semibold hover:underline">Sign in</Link>
         </p>
       </div>
     </div>

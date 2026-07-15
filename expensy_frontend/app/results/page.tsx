@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import DriverAvatar from "@/components/DriverAvatar";
 import { RIDES, rideServesRoute, segmentPrice } from "@/lib/data";
 
 function Results() {
@@ -36,7 +37,7 @@ function Results() {
     ride.waypoints.find(w => w.city.toLowerCase() === to.toLowerCase());
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="mb-6">
@@ -56,7 +57,7 @@ function Results() {
                   key={s}
                   onClick={() => setSort(s)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                    sort === s ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                    sort === s ? "bg-indigo-700 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                   }`}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -66,16 +67,17 @@ function Results() {
           </div>
           <div className="flex items-center gap-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Max price</p>
-            <input type="range" min={1} max={20} value={maxPrice} onChange={e => setMaxPrice(Number(e.target.value))} className="flex-1 accent-blue-600" />
-            <span className="text-sm font-bold text-blue-600 w-8 text-right">&#x20BC;{maxPrice}</span>
+            <input type="range" min={1} max={20} value={maxPrice} onChange={e => setMaxPrice(Number(e.target.value))} className="flex-1 accent-indigo-700" />
+            <span className="text-sm font-bold text-amber-600 w-8 text-right">&#x20BC;{maxPrice}</span>
           </div>
         </div>
 
         {filtered.length === 0 ? (
           <div className="text-center py-16 text-slate-400">
             <Icon name="car-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 12px" }} />
-            <p className="font-semibold text-slate-600">No rides found</p>
-            <p className="text-sm mt-1">Try adjusting filters or a different date</p>
+            <p className="font-semibold text-slate-600 text-lg">Hər şeyin bir vaxtı var</p>
+            <p className="text-xs text-slate-400 mt-1 mb-4 italic">Everything has its time</p>
+            <p className="text-sm text-slate-400">Try a different date or adjust the price filter</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -93,7 +95,7 @@ function Results() {
                 <div
                   key={ride.id}
                   onClick={() => router.push(`/ride/${ride.id}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${date}&seats=${seats}`)}
-                  className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-blue-200 hover:shadow-md transition-all cursor-pointer"
+                  className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex justify-between items-start mb-4">
                     {/* Driver — separate link, stops card click */}
@@ -102,19 +104,17 @@ function Results() {
                       onClick={e => e.stopPropagation()}
                       className="flex items-center gap-3 group"
                     >
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                        <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#2563EB" }} />
-                      </div>
+                      <DriverAvatar name={ride.driver.name} size={40} />
                       <div>
-                        <p className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">{ride.driver.name}</p>
-                        <p className="text-xs text-blue-600 font-semibold mt-0.5 flex items-center gap-0.5">
+                        <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{ride.driver.name}</p>
+                        <p className="text-xs text-indigo-700 font-semibold mt-0.5 flex items-center gap-0.5">
                           <Icon name="star" style={{ fontSize: "11px" }} />
                           {ride.driver.rating} · {ride.driver.trips} trips
                         </p>
                       </div>
                     </Link>
                     <div className="text-right">
-                      <p className="text-xl font-bold text-blue-600">&#x20BC;{price}</p>
+                      <p className="text-xl font-bold text-amber-600">&#x20BC;{price}</p>
                       <p className="text-xs text-slate-400 font-medium">per seat</p>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ function Results() {
                       <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
                       <div className="flex-1 h-px bg-slate-200 relative">
                         {via.length > 0 && (
-                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] bg-blue-50 text-blue-500 px-1.5 rounded font-semibold whitespace-nowrap">
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] bg-indigo-50 text-indigo-600 px-1.5 rounded font-semibold whitespace-nowrap">
                             via {via.join(", ")}
                           </span>
                         )}
@@ -154,12 +154,16 @@ function Results() {
                         <Icon name="car-outline" style={{ fontSize: "12px" }} />
                         {ride.car}
                       </span>
-                      <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-semibold flex items-center gap-1">
+                      <span className={`text-xs px-2 py-1 rounded-lg font-semibold flex items-center gap-1 ${
+                        ride.seats >= 3 ? "bg-green-50 text-green-700" :
+                        ride.seats === 2 ? "bg-amber-50 text-amber-700" :
+                        "bg-red-50 text-red-600"
+                      }`}>
                         <Icon name="person-outline" style={{ fontSize: "12px" }} />
-                        {ride.seats} left
+                        {ride.seats} seat{ride.seats !== 1 ? "s" : ""} left
                       </span>
                     </div>
-                    <span className="text-xs text-blue-600 font-semibold flex items-center gap-0.5">
+                    <span className="text-xs text-indigo-700 font-semibold flex items-center gap-0.5">
                       View <Icon name="chevron-forward-outline" style={{ fontSize: "12px" }} />
                     </span>
                   </div>

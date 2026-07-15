@@ -59,18 +59,18 @@ function Rate({ id }: { id: string }) {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F8FAFF] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#F5F5FF] flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
           <div className="w-24 h-24 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-yellow-100">
             <Icon name="star" style={{ fontSize: "48px", color: "#FBBF24" }} />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Thanks for rating!</h1>
-          <p className="text-slate-400 text-sm mb-8">Your feedback helps make RideLink better for everyone.</p>
+          <p className="text-slate-400 text-sm mb-8">Your feedback helps make Yola better for everyone.</p>
 
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6 text-left">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#2563EB" }} />
+              <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center">
+                <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#4338CA" }} />
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900">{ride.driver.name}</p>
@@ -85,17 +85,17 @@ function Rate({ id }: { id: string }) {
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {tags.map(t => (
-                  <span key={t} className="text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-semibold">{t}</span>
+                  <span key={t} className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">{t}</span>
                 ))}
               </div>
             )}
           </div>
 
           <div className="flex flex-col gap-3">
-            <Link href="/" className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl text-sm text-center hover:bg-blue-700 transition-colors block">
+            <Link href="/" className="w-full bg-indigo-700 text-white font-bold py-4 rounded-2xl text-sm text-center hover:bg-indigo-800 transition-colors block">
               Back to home
             </Link>
-            <Link href="/trips" className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm text-center hover:border-blue-200 transition-colors block">
+            <Link href="/trips" className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm text-center hover:border-indigo-200 transition-colors block">
               View my trips
             </Link>
           </div>
@@ -105,7 +105,7 @@ function Rate({ id }: { id: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       {/* Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
@@ -119,8 +119,8 @@ function Rate({ id }: { id: string }) {
       <div className="max-w-2xl mx-auto px-4 py-8 pb-24 md:pb-8">
         {/* Trip summary */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-            <Icon name="person-circle-outline" style={{ fontSize: "40px", color: "#2563EB" }} />
+          <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+            <Icon name="person-circle-outline" style={{ fontSize: "40px", color: "#4338CA" }} />
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-slate-900">{ride.driver.name}</p>
@@ -131,7 +131,7 @@ function Rate({ id }: { id: string }) {
           </div>
           <div className="text-right">
             <p className="text-xs text-slate-400">Previous rating</p>
-            <p className="text-sm font-bold text-blue-600 flex items-center gap-0.5 justify-end mt-0.5">
+            <p className="text-sm font-bold text-indigo-700 flex items-center gap-0.5 justify-end mt-0.5">
               <Icon name="star" style={{ fontSize: "13px", color: "#FBBF24" }} />
               {ride.driver.rating}
             </p>
@@ -160,8 +160,8 @@ function Rate({ id }: { id: string }) {
                     onClick={() => toggleTag(tag.label)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       active
-                        ? "bg-blue-600 text-white shadow-sm"
-                        : "bg-slate-50 text-slate-600 border border-slate-100 hover:border-blue-300"
+                        ? "bg-indigo-700 text-white shadow-sm"
+                        : "bg-slate-50 text-slate-600 border border-slate-100 hover:border-indigo-300"
                     }`}
                   >
                     <Icon name={tag.icon} style={{ fontSize: "13px" }} />
@@ -178,7 +178,7 @@ function Rate({ id }: { id: string }) {
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Leave a comment (optional)</p>
             <textarea
-              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors resize-none"
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors resize-none"
               rows={3}
               placeholder="Tell us more about your experience…"
               value={comment}
@@ -190,7 +190,7 @@ function Rate({ id }: { id: string }) {
         <button
           onClick={submit}
           disabled={!stars}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Submit rating
         </button>

@@ -48,7 +48,7 @@ function Tracking({ id }: { id: string }) {
   const arrived = progress >= 1;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF] flex flex-col">
+    <div className="min-h-screen bg-[#F5F5FF] flex flex-col">
       <Navbar />
 
       {/* Full-height map */}
@@ -57,13 +57,13 @@ function Tracking({ id }: { id: string }) {
 
         {/* Floating status pill */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-white rounded-2xl shadow-lg border border-slate-100 px-5 py-3 flex items-center gap-3 whitespace-nowrap">
-          <Icon name={status.icon} style={{ fontSize: "20px", color: arrived ? "#22C55E" : "#2563EB" }} />
+          <Icon name={status.icon} style={{ fontSize: "20px", color: arrived ? "#22C55E" : "#4338CA" }} />
           <span className="text-sm font-bold text-slate-900">{status.label}</span>
         </div>
 
         {/* ETA badge */}
         {!arrived && (
-          <div className="absolute top-4 right-4 z-[1000] bg-blue-600 text-white rounded-2xl px-4 py-2 text-center shadow-lg">
+          <div className="absolute top-4 right-4 z-[1000] bg-indigo-700 text-white rounded-2xl px-4 py-2 text-center shadow-lg">
             <p className="text-xs font-semibold opacity-80">ETA</p>
             <p className="text-lg font-bold tabular-nums">{eta} min</p>
           </div>
@@ -77,7 +77,7 @@ function Tracking({ id }: { id: string }) {
           <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
           <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-600 rounded-full transition-all duration-200"
+              className="h-full bg-indigo-700 rounded-full transition-all duration-200"
               style={{ width: `${progress * 100}%` }}
             />
           </div>
@@ -91,8 +91,8 @@ function Tracking({ id }: { id: string }) {
 
         {/* Driver row */}
         <div className="flex items-center gap-4 mb-5">
-          <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-            <Icon name="person-circle-outline" style={{ fontSize: "34px", color: "#2563EB" }} />
+          <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center">
+            <Icon name="person-circle-outline" style={{ fontSize: "34px", color: "#4338CA" }} />
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-slate-900">{ride.driver.name}</p>
@@ -101,9 +101,9 @@ function Tracking({ id }: { id: string }) {
           <div className="flex gap-2">
             <Link
               href={`/chat/${ride.id}`}
-              className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+              className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center hover:bg-indigo-100 transition-colors"
             >
-              <Icon name="chatbubble-outline" style={{ fontSize: "18px", color: "#2563EB" }} />
+              <Icon name="chatbubble-outline" style={{ fontSize: "18px", color: "#4338CA" }} />
             </Link>
             <a
               href="tel:+994501234567"
@@ -119,7 +119,7 @@ function Tracking({ id }: { id: string }) {
           {STATUSES.map((s, i) => (
             <div key={s.key} className="flex flex-col items-center gap-1 flex-1">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                i <= statusIdx ? "bg-blue-600" : "bg-slate-100"
+                i <= statusIdx ? "bg-indigo-700" : "bg-slate-100"
               }`}>
                 <Icon name={s.icon} style={{ fontSize: "13px", color: i <= statusIdx ? "#fff" : "#94A3B8" }} />
               </div>
@@ -132,7 +132,7 @@ function Tracking({ id }: { id: string }) {
 
         {arrived ? (
           <div className="flex flex-col gap-3">
-            <Link href={`/rate/${ride.id}`} className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl text-sm text-center hover:bg-blue-700 transition-colors block">
+            <Link href={`/rate/${ride.id}`} className="w-full bg-indigo-700 text-white font-bold py-4 rounded-2xl text-sm text-center hover:bg-indigo-800 transition-colors block">
               Rate your trip
             </Link>
           </div>

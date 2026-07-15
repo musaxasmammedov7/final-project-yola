@@ -93,7 +93,7 @@ function DriverPage({ id }: { id: string }) {
   const driver = DRIVER_PROFILES.find(d => d.id === id);
 
   if (!driver) return (
-    <div className="min-h-screen bg-[#F8FAFF] flex items-center justify-center">
+    <div className="min-h-screen bg-[#F5F5FF] flex items-center justify-center">
       <p className="text-slate-400">Driver not found</p>
     </div>
   );
@@ -109,7 +109,7 @@ function DriverPage({ id }: { id: string }) {
   }));
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       {/* Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
@@ -156,15 +156,15 @@ function DriverPage({ id }: { id: string }) {
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 mt-5 pt-5 border-t border-slate-50">
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{driver.trips}</p>
+              <p className="text-2xl font-bold text-indigo-700">{driver.trips}</p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Trips</p>
             </div>
             <div className="text-center border-x border-slate-50">
-              <p className="text-2xl font-bold text-blue-600">{driver.rating}</p>
+              <p className="text-2xl font-bold text-indigo-700">{driver.rating}</p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Rating</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{driver.fiveStarPct}%</p>
+              <p className="text-2xl font-bold text-indigo-700">{driver.fiveStarPct}%</p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">5-star rides</p>
             </div>
           </div>
@@ -232,7 +232,7 @@ function DriverPage({ id }: { id: string }) {
                 {review.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2 ml-12">
                     {review.tags.map(tag => (
-                      <span key={tag} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-semibold">
+                      <span key={tag} className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">
                         {tag}
                       </span>
                     ))}
@@ -252,10 +252,10 @@ function DriverPage({ id }: { id: string }) {
                 <Link
                   key={ride.id}
                   href={`/ride/${ride.id}`}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-blue-50 transition-colors group"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 transition-colors group"
                 >
-                  <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <Icon name="car-outline" style={{ fontSize: "18px", color: "#2563EB" }} />
+                  <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                    <Icon name="car-outline" style={{ fontSize: "18px", color: "#4338CA" }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-slate-900">
@@ -264,7 +264,7 @@ function DriverPage({ id }: { id: string }) {
                     <p className="text-xs text-slate-400">{ride.date} · {ride.departureTime}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold text-blue-600">&#x20BC;{ride.price}</p>
+                    <p className="text-sm font-bold text-indigo-700">&#x20BC;{ride.price}</p>
                     <p className="text-xs text-slate-400">{ride.seats} seats</p>
                   </div>
                   <Icon name="chevron-forward-outline" style={{ fontSize: "16px", color: "#94A3B8" }} />

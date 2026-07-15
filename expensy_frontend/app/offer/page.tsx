@@ -11,16 +11,6 @@ const PinPicker = dynamic(() => import("@/components/PinPicker"), { ssr: false }
 
 type PickerTarget = { kind: "from" | "to" | "stop"; index?: number };
 
-const Field = ({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) => (
-  <div className="flex items-center gap-3 px-5 py-4">
-    <Icon name={icon} style={{ fontSize: "20px", color: "#2563EB", flexShrink: 0 }} />
-    <div className="flex-1">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
-      {children}
-    </div>
-  </div>
-);
-
 export default function OfferPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -53,11 +43,11 @@ export default function OfferPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F8FAFF]">
+      <div className="min-h-screen bg-[#F5F5FF]">
         <Navbar />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-blue-100">
-            <Icon name="car-sport-outline" style={{ fontSize: "40px", color: "#2563EB" }} />
+          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-indigo-100">
+            <Icon name="car-sport-outline" style={{ fontSize: "40px", color: "#4338CA" }} />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Ride published!</h1>
           <p className="text-slate-400 text-sm mb-8">Passengers can now find and book your ride.</p>
@@ -77,17 +67,26 @@ export default function OfferPage() {
             ))}
           </div>
           <div className="flex flex-col gap-3">
-            <button onClick={() => router.push("/trips")} className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl text-sm hover:bg-blue-700 transition-colors">View my trips</button>
-            <button onClick={() => { setSubmitted(false); setFrom(""); setTo(""); setStops([]); setCar(""); setDescription(""); }} className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm hover:border-blue-200 transition-colors">Offer another ride</button>
+            <button onClick={() => router.push("/trips")} className="w-full bg-indigo-700 text-white font-bold py-4 rounded-2xl text-sm hover:bg-indigo-800 transition-colors">View my trips</button>
+            <button onClick={() => { setSubmitted(false); setFrom(""); setTo(""); setStops([]); setCar(""); setDescription(""); }} className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm hover:border-indigo-200 transition-colors">Offer another ride</button>
           </div>
         </div>
       </div>
     );
   }
 
+  const Field = ({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) => (
+    <div className="flex items-center gap-3 px-5 py-4">
+      <Icon name={icon} style={{ fontSize: "20px", color: "#4338CA", flexShrink: 0 }} />
+      <div className="flex-1">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
+        {children}
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
 
       {picker && (
@@ -114,17 +113,17 @@ export default function OfferPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">From</p>
               <input className="w-full text-sm font-medium text-slate-900 outline-none mt-0.5 bg-transparent" value={from} onChange={e => setFrom(e.target.value)} placeholder="Departure city" />
             </div>
-            <button onClick={() => setPicker({ kind: "from" })} className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors flex-shrink-0">
-              <Icon name="map-outline" style={{ fontSize: "15px", color: "#2563EB" }} />
+            <button onClick={() => setPicker({ kind: "from" })} className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center hover:bg-indigo-100 transition-colors flex-shrink-0">
+              <Icon name="map-outline" style={{ fontSize: "15px", color: "#4338CA" }} />
             </button>
           </div>
 
           {/* Mid-stops */}
           {stops.map((stop, i) => (
-            <div key={i} className="flex items-center gap-3 px-5 py-4 border-b border-slate-50 bg-blue-50/30">
+            <div key={i} className="flex items-center gap-3 px-5 py-4 border-b border-slate-50 bg-indigo-50/30">
               <div className="flex flex-col items-center gap-1 flex-shrink-0">
                 <div className="w-px h-2 bg-slate-200" />
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-400 border-2 border-white ring-1 ring-blue-200" />
+                <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 border-2 border-white ring-1 ring-indigo-200" />
                 <div className="w-px h-2 bg-slate-200" />
               </div>
               <div className="flex-1">
@@ -137,8 +136,8 @@ export default function OfferPage() {
                   autoFocus
                 />
               </div>
-              <button onClick={() => setPicker({ kind: "stop", index: i })} className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors flex-shrink-0">
-                <Icon name="map-outline" style={{ fontSize: "15px", color: "#2563EB" }} />
+              <button onClick={() => setPicker({ kind: "stop", index: i })} className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center hover:bg-indigo-100 transition-colors flex-shrink-0">
+                <Icon name="map-outline" style={{ fontSize: "15px", color: "#4338CA" }} />
               </button>
               <button onClick={() => removeStop(i)} className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors flex-shrink-0">
                 <Icon name="close-outline" style={{ fontSize: "16px", color: "#EF4444" }} />
@@ -150,10 +149,10 @@ export default function OfferPage() {
           {stops.length < 3 && (
             <button
               onClick={addStop}
-              className="w-full flex items-center gap-3 px-5 py-3 border-b border-slate-50 text-blue-600 hover:bg-blue-50 transition-colors"
+              className="w-full flex items-center gap-3 px-5 py-3 border-b border-slate-50 text-indigo-700 hover:bg-indigo-50 transition-colors"
             >
-              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <Icon name="add-outline" style={{ fontSize: "14px", color: "#2563EB" }} />
+              <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <Icon name="add-outline" style={{ fontSize: "14px", color: "#4338CA" }} />
               </div>
               <span className="text-xs font-bold">Add a mid-stop</span>
             </button>
@@ -169,8 +168,8 @@ export default function OfferPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">To</p>
               <input className="w-full text-sm font-medium text-slate-900 outline-none mt-0.5 bg-transparent" value={to} onChange={e => setTo(e.target.value)} placeholder="Destination city" />
             </div>
-            <button onClick={() => setPicker({ kind: "to" })} className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors flex-shrink-0">
-              <Icon name="map-outline" style={{ fontSize: "15px", color: "#2563EB" }} />
+            <button onClick={() => setPicker({ kind: "to" })} className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center hover:bg-indigo-100 transition-colors flex-shrink-0">
+              <Icon name="map-outline" style={{ fontSize: "15px", color: "#4338CA" }} />
             </button>
           </div>
         </div>
@@ -201,7 +200,7 @@ export default function OfferPage() {
                   <button
                     key={c.id}
                     onClick={() => setCar(c.name)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${car === c.name ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-slate-50 hover:border-blue-300"}`}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${car === c.name ? "border-indigo-600 bg-indigo-50" : "border-slate-200 bg-slate-50 hover:border-indigo-300"}`}
                   >
                     <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-200 flex items-center justify-center">
                       {c.photo
@@ -213,12 +212,12 @@ export default function OfferPage() {
                       <p className="text-sm font-semibold text-slate-900">{c.name}</p>
                       <p className="text-xs text-slate-400">{c.year} · {c.color}</p>
                     </div>
-                    {car === c.name && <Icon name="checkmark-circle" style={{ fontSize: "20px", color: "#2563EB" }} />}
+                    {car === c.name && <Icon name="checkmark-circle" style={{ fontSize: "20px", color: "#4338CA" }} />}
                   </button>
                 ))}
                 <button
                   onClick={() => setCar("")}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${!savedCars.find(c => c.name === car) && car !== "" ? "border-blue-500 bg-blue-50" : "border-dashed border-slate-200 hover:border-blue-300"}`}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${!savedCars.find(c => c.name === car) && car !== "" ? "border-indigo-600 bg-indigo-50" : "border-dashed border-slate-200 hover:border-indigo-300"}`}
                 >
                   <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
                     <Icon name="add-outline" style={{ fontSize: "18px", color: "#94A3B8" }} />
@@ -226,13 +225,13 @@ export default function OfferPage() {
                   <span className="text-sm font-medium text-slate-500">Use a different car</span>
                 </button>
                 {(!savedCars.find(c => c.name === car)) && (
-                  <input className="w-full text-sm font-medium text-slate-900 outline-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:border-blue-400" value={car} onChange={e => setCar(e.target.value)} placeholder="e.g. Toyota Camry 2021" />
+                  <input className="w-full text-sm font-medium text-slate-900 outline-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:border-indigo-400" value={car} onChange={e => setCar(e.target.value)} placeholder="e.g. Toyota Camry 2021" />
                 )}
               </div>
             ) : (
               <div>
                 <input className="w-full text-sm font-medium text-slate-900 outline-none bg-transparent" value={car} onChange={e => setCar(e.target.value)} placeholder="e.g. Toyota Camry 2021" />
-                <Link href="/edit-profile" className="text-xs text-blue-500 font-semibold mt-2 inline-flex items-center gap-1 hover:text-blue-700">
+                <Link href="/edit-profile" className="text-xs text-indigo-600 font-semibold mt-2 inline-flex items-center gap-1 hover:text-indigo-800">
                   <Icon name="add-circle-outline" style={{ fontSize: "13px" }} />
                   Save cars to your profile for quick selection
                 </Link>
@@ -243,9 +242,9 @@ export default function OfferPage() {
             <div className="flex-1">
               <Field icon="people-outline" label="Seats">
                 <div className="flex items-center gap-2 mt-0.5">
-                  <button onClick={() => setSeats(Math.max(1, seats - 1))} className="text-blue-600 font-bold w-5">−</button>
+                  <button onClick={() => setSeats(Math.max(1, seats - 1))} className="text-indigo-700 font-bold w-5">−</button>
                   <span className="text-sm font-semibold text-slate-900 w-4 text-center">{seats}</span>
-                  <button onClick={() => setSeats(Math.min(6, seats + 1))} className="text-blue-600 font-bold w-5">+</button>
+                  <button onClick={() => setSeats(Math.min(6, seats + 1))} className="text-indigo-700 font-bold w-5">+</button>
                 </div>
               </Field>
             </div>
@@ -263,7 +262,7 @@ export default function OfferPage() {
         {/* Description */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm mb-4 overflow-hidden">
           <div className="flex items-start gap-3 px-5 py-4">
-            <Icon name="document-text-outline" style={{ fontSize: "20px", color: "#2563EB", flexShrink: 0, marginTop: "2px" }} />
+            <Icon name="document-text-outline" style={{ fontSize: "20px", color: "#4338CA", flexShrink: 0, marginTop: "2px" }} />
             <div className="flex-1">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Trip description</p>
               <textarea
@@ -279,15 +278,15 @@ export default function OfferPage() {
           </div>
         </div>
 
-        <div className="bg-blue-50 rounded-2xl border border-blue-100 p-4 mb-6 flex items-start gap-3">
-          <Icon name="bulb-outline" style={{ fontSize: "18px", color: "#2563EB", flexShrink: 0, marginTop: "1px" }} />
-          <p className="text-xs text-blue-700 font-medium leading-relaxed">Fair price for Baku → Ganja is typically ₼4–7. Lower prices fill seats faster.</p>
+        <div className="bg-indigo-50 rounded-2xl border border-indigo-100 p-4 mb-6 flex items-start gap-3">
+          <Icon name="bulb-outline" style={{ fontSize: "18px", color: "#4338CA", flexShrink: 0, marginTop: "1px" }} />
+          <p className="text-xs text-indigo-800 font-medium leading-relaxed">Fair price for Baku → Ganja is typically ₼4–7. Lower prices fill seats faster.</p>
         </div>
 
         <button
           onClick={() => { if (from && to && car) setSubmitted(true); }}
           disabled={!from || !to || !car}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-4 rounded-2xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Publish ride
         </button>

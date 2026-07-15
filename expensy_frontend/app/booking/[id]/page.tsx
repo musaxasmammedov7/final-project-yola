@@ -4,6 +4,7 @@ import { use, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import DriverAvatar from "@/components/DriverAvatar";
 import { RIDES } from "@/lib/data";
 
 function Booking({ id }: { id: string }) {
@@ -18,7 +19,7 @@ function Booking({ id }: { id: string }) {
   const [cvv, setCvv] = useState("");
 
   if (!ride) return (
-    <div className="min-h-screen bg-[#F8FAFF]"><Navbar /><div className="max-w-2xl mx-auto px-4 py-16 text-center text-slate-400">Ride not found</div></div>
+    <div className="min-h-screen bg-[#F5F5FF]"><Navbar /><div className="max-w-2xl mx-auto px-4 py-16 text-center text-slate-400">Ride not found</div></div>
   );
 
   const from = params.get("from") || ride.waypoints[0].city;
@@ -29,16 +30,16 @@ function Booking({ id }: { id: string }) {
 
   if (step === "success") {
     return (
-      <div className="min-h-screen bg-[#F8FAFF]">
+      <div className="min-h-screen bg-[#F0FDF4]">
         <Navbar />
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-100">
-            <Icon name="checkmark-circle" style={{ fontSize: "44px", color: "#22C55E" }} />
+        <div className="max-w-2xl mx-auto px-4 py-12 text-center">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-200">
+            <Icon name="checkmark-circle" style={{ fontSize: "44px", color: "#16A34A" }} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Booking confirmed!</h1>
-          <p className="text-slate-400 text-sm mb-8">Your seat is reserved. Have a great trip!</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">You're all set!</h1>
+          <p className="text-slate-500 text-sm mb-8">Seat confirmed. Have a great trip!</p>
 
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-left mb-6">
+          <div className="bg-white rounded-2xl border border-green-100 shadow-sm p-6 text-left mb-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Trip summary</p>
             {[
               { label: "Route", value: `${from} → ${to}` },
@@ -53,15 +54,15 @@ function Booking({ id }: { id: string }) {
             ))}
             <div className="flex justify-between text-sm pt-3 border-t border-slate-50 mt-2">
               <span className="text-slate-500">Total paid</span>
-              <span className="font-bold text-blue-600 text-base">&#x20BC;{total}</span>
+              <span className="font-bold text-green-600 text-base">&#x20BC;{total}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-3">
-            <button onClick={() => router.push("/trips")} className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl text-sm hover:bg-blue-700 transition-colors">
+            <button onClick={() => router.push("/trips")} className="w-full bg-green-600 text-white font-bold py-4 rounded-2xl text-sm hover:bg-green-700 transition-colors">
               View my trips
             </button>
-            <Link href="/" className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm text-center hover:border-blue-200 transition-colors block">
+            <Link href="/" className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm text-center hover:border-slate-200 transition-colors block">
               Back to home
             </Link>
           </div>
@@ -71,7 +72,7 @@ function Booking({ id }: { id: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
       <div className="max-w-2xl mx-auto px-4 py-8">
         <Link
@@ -89,7 +90,7 @@ function Booking({ id }: { id: string }) {
           {(["details", "payment"] as const).map((s, i) => (
             <div key={s} className="flex items-center gap-2 flex-1">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                step === s ? "bg-blue-600 text-white" : step === "payment" && s === "details" ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"
+                step === s ? "bg-indigo-700 text-white" : step === "payment" && s === "details" ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"
               }`}>
                 {step === "payment" && s === "details"
                   ? <Icon name="checkmark" style={{ fontSize: "14px" }} />
@@ -104,15 +105,13 @@ function Booking({ id }: { id: string }) {
         {/* Trip summary */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-              <Icon name="person-circle-outline" style={{ fontSize: "28px", color: "#2563EB" }} />
-            </div>
+            <DriverAvatar name={ride.driver.name} size={40} />
             <div>
               <p className="text-sm font-semibold text-slate-900">{ride.driver.name}</p>
               <p className="text-xs text-slate-400">{ride.car}</p>
             </div>
             <div className="ml-auto text-right">
-              <p className="text-xl font-bold text-blue-600">&#x20BC;{total}</p>
+              <p className="text-xl font-bold text-amber-600">&#x20BC;{total}</p>
               <p className="text-xs text-slate-400">{seats} seat{seats > 1 ? "s" : ""}</p>
             </div>
           </div>
@@ -130,11 +129,11 @@ function Booking({ id }: { id: string }) {
             <div className="flex flex-col gap-4">
               <div>
                 <label className="text-xs font-semibold text-slate-500 mb-1 block">Full name</label>
-                <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors" value={name} onChange={e => setName(e.target.value)} />
+                <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors" value={name} onChange={e => setName(e.target.value)} />
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-500 mb-1 block">Phone number</label>
-                <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors" value={phone} onChange={e => setPhone(e.target.value)} />
+                <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors" value={phone} onChange={e => setPhone(e.target.value)} />
               </div>
             </div>
           </div>
@@ -147,18 +146,18 @@ function Booking({ id }: { id: string }) {
               <div>
                 <label className="text-xs font-semibold text-slate-500 mb-1 block">Card number</label>
                 <div className="relative">
-                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors pr-10" placeholder="1234 5678 9012 3456" value={card} onChange={e => setCard(e.target.value)} maxLength={19} />
+                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors pr-10" placeholder="1234 5678 9012 3456" value={card} onChange={e => setCard(e.target.value)} maxLength={19} />
                   <Icon name="card-outline" style={{ fontSize: "18px", color: "#94A3B8", position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)" }} />
                 </div>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
                   <label className="text-xs font-semibold text-slate-500 mb-1 block">Expiry</label>
-                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors" placeholder="MM/YY" value={expiry} onChange={e => setExpiry(e.target.value)} maxLength={5} />
+                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors" placeholder="MM/YY" value={expiry} onChange={e => setExpiry(e.target.value)} maxLength={5} />
                 </div>
                 <div className="w-28">
                   <label className="text-xs font-semibold text-slate-500 mb-1 block">CVV</label>
-                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 transition-colors" placeholder="123" value={cvv} onChange={e => setCvv(e.target.value)} maxLength={3} type="password" />
+                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-400 transition-colors" placeholder="123" value={cvv} onChange={e => setCvv(e.target.value)} maxLength={3} type="password" />
                 </div>
               </div>
             </div>
@@ -171,9 +170,9 @@ function Booking({ id }: { id: string }) {
 
         <button
           onClick={() => step === "details" ? setStep("payment") : setStep("success")}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors"
+          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 rounded-2xl text-sm transition-colors"
         >
-          {step === "details" ? "Continue to payment →" : `Pay $${total} · Confirm booking`}
+          {step === "details" ? "Continue to payment →" : `Pay ₼${total} · Confirm booking`}
         </button>
       </div>
     </div>

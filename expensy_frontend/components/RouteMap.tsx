@@ -18,7 +18,7 @@ const makeIcon = (color: string) =>
 
 const startIcon = makeIcon("#22C55E");
 const endIcon   = makeIcon("#EF4444");
-const viaIcon   = makeIcon("#2563EB");
+const viaIcon   = makeIcon("#4338CA");
 
 function FitBounds({ coords }: { coords: [number, number][] }) {
   const map = useMap();
@@ -79,7 +79,7 @@ export default function RouteMap({ waypoints, fromCity, toCity }: Props) {
           alignItems: "center", justifyContent: "center",
           borderRadius: "inherit",
         }}>
-          <span style={{ fontSize: "13px", color: "#2563EB", fontWeight: 600 }}>Loading map…</span>
+          <span style={{ fontSize: "13px", color: "#4338CA", fontWeight: 600 }}>Loading map…</span>
         </div>
       )}
       <MapContainer
@@ -102,7 +102,7 @@ export default function RouteMap({ waypoints, fromCity, toCity }: Props) {
             {/* Road line */}
             <Polyline
               positions={routeCoords}
-              pathOptions={{ color: "#2563EB", weight: 4, opacity: 0.9 }}
+              pathOptions={{ color: "#4338CA", weight: 4, opacity: 0.9 }}
             />
           </>
         )}

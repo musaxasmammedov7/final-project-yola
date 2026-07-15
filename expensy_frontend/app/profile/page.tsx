@@ -28,13 +28,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
       <div className="max-w-2xl mx-auto px-4 py-8">
 
         {/* Avatar + stats */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 mb-4 text-center">
-          <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-4 shadow-md overflow-hidden">
+          <div className="w-20 h-20 rounded-full bg-indigo-700 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-4 shadow-md overflow-hidden">
             {user?.avatar
               ? <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" />
               : initials
@@ -71,9 +71,9 @@ export default function ProfilePage() {
             <Link
               key={item.label}
               href={item.href}
-              className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex items-center gap-4 hover:border-blue-200 transition-colors"
+              className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex items-center gap-4 hover:border-indigo-200 transition-colors"
             >
-              <Icon name={item.icon} style={{ fontSize: "22px", color: "#2563EB", width: "28px" }} />
+              <Icon name={item.icon} style={{ fontSize: "22px", color: "#4338CA", width: "28px" }} />
               <span className="text-sm font-semibold text-slate-700 flex-1">{item.label}</span>
               <Icon name="chevron-forward-outline" style={{ fontSize: "16px", color: "#CBD5E1" }} />
             </Link>
