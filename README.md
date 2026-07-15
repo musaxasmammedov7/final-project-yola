@@ -2,7 +2,6 @@
 
 A full-stack expense tracking application deployed on **Azure Kubernetes Service** with enterprise-grade DevOps, security, and observability.
 
-![Architecture](docs/expensy_architecture_v2.png)
 
 ---
 
