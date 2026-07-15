@@ -4,4 +4,4 @@ metadata:
   name: yola-frontend-config
   namespace: yola
 data:
-  NEXT_PUBLIC_API_URL: "https://yola-istio-ingress.swedencentral.cloudapp.azure.com"
+  NEXT_PUBLIC_API_URL: "https://yola-app.swedencentral.cloudapp.azure.com"

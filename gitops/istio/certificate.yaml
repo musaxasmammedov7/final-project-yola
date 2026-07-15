@@ -7,7 +7,7 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: yola-istio-ingress.swedencentral.cloudapp.azure.com
+  commonName: yola-app.swedencentral.cloudapp.azure.com
   dnsNames:
-    - yola-istio-ingress.swedencentral.cloudapp.azure.com
+    - yola-app.swedencentral.cloudapp.azure.com
   secretName: yola-tls-cert
