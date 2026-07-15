@@ -39,7 +39,7 @@ function CarCard({
           : <span style={{ fontSize: "56px" }}>🚗</span>
         }
         <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center">
-          <Icon name="camera-outline" style={{ fontSize: "16px", color: "#2563EB" }} />
+          <Icon name="camera-outline" style={{ fontSize: "16px", color: "#4338CA" }} />
         </div>
         <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={pickPhoto} />
       </div>
@@ -49,7 +49,7 @@ function CarCard({
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Car model</p>
           <input
-            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-400"
+            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400"
             value={car.name}
             onChange={e => onUpdate({ name: e.target.value })}
             placeholder="e.g. Toyota Camry 2021"
@@ -59,7 +59,7 @@ function CarCard({
           <div className="flex-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Year</p>
             <input
-              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-400"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400"
               value={car.year}
               onChange={e => onUpdate({ year: e.target.value })}
               placeholder="2021"
@@ -68,7 +68,7 @@ function CarCard({
           <div className="flex-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Color</p>
             <input
-              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-400"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-400"
               value={car.color}
               onChange={e => onUpdate({ color: e.target.value })}
               placeholder="Silver"
@@ -109,7 +109,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       {/* Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
@@ -119,7 +119,7 @@ export default function EditProfilePage() {
           <h1 className="text-base font-bold text-slate-900 flex-1">Edit profile</h1>
           <button
             onClick={save}
-            className="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors"
+            className="bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-indigo-800 transition-colors"
           >
             Save
           </button>
@@ -132,7 +132,7 @@ export default function EditProfilePage() {
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col items-center gap-4">
           <div className="relative">
             <div
-              className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold cursor-pointer overflow-hidden shadow-md"
+              className="w-24 h-24 rounded-full bg-indigo-700 flex items-center justify-center text-white text-3xl font-bold cursor-pointer overflow-hidden shadow-md"
               onClick={() => avatarRef.current?.click()}
             >
               {avatar
@@ -142,9 +142,9 @@ export default function EditProfilePage() {
             </div>
             <button
               onClick={() => avatarRef.current?.click()}
-              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white border-2 border-blue-100 shadow flex items-center justify-center"
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white border-2 border-indigo-100 shadow flex items-center justify-center"
             >
-              <Icon name="camera-outline" style={{ fontSize: "15px", color: "#2563EB" }} />
+              <Icon name="camera-outline" style={{ fontSize: "15px", color: "#4338CA" }} />
             </button>
             <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={pickAvatar} />
           </div>
@@ -191,7 +191,7 @@ export default function EditProfilePage() {
           </div>
           <button
             onClick={() => addCar({ name: "", year: "", color: "", photo: null })}
-            className="w-full mt-3 border-2 border-dashed border-slate-200 rounded-2xl py-4 text-sm font-semibold text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-colors flex items-center justify-center gap-2"
+            className="w-full mt-3 border-2 border-dashed border-slate-200 rounded-2xl py-4 text-sm font-semibold text-slate-400 hover:border-indigo-300 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2"
           >
             <Icon name="add-circle-outline" style={{ fontSize: "18px" }} />
             Add a car

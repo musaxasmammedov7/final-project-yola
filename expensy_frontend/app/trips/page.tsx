@@ -13,7 +13,7 @@ const INITIAL_TRIPS: Trip[] = [
 ];
 
 const STATUS_COLOR: Record<string, { dot: string; text: string }> = {
-  upcoming:  { dot: "bg-blue-500",  text: "text-blue-600" },
+  upcoming:  { dot: "bg-indigo-600",  text: "text-indigo-700" },
   completed: { dot: "bg-green-500", text: "text-green-600" },
   cancelled: { dot: "bg-slate-300", text: "text-slate-400" },
 };
@@ -28,7 +28,7 @@ export default function TripsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="min-h-screen bg-[#F5F5FF]">
       <Navbar />
 
       {/* Cancel modal */}
@@ -52,7 +52,7 @@ export default function TripsPage() {
           <div className="text-center py-20">
             <Icon name="map-outline" style={{ fontSize: "48px", color: "#CBD5E1", display: "block", margin: "0 auto 12px" }} />
             <p className="font-semibold text-slate-500">No trips yet</p>
-            <Link href="/" className="text-sm text-blue-600 font-semibold mt-2 inline-block">Find a ride →</Link>
+            <Link href="/" className="text-sm text-indigo-700 font-semibold mt-2 inline-block">Find a ride →</Link>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -76,21 +76,21 @@ export default function TripsPage() {
                   {/* Driver + price */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center">
-                        <Icon name={trip.type === "driver" ? "car-outline" : "person-outline"} style={{ fontSize: "14px", color: "#2563EB" }} />
+                      <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center">
+                        <Icon name={trip.type === "driver" ? "car-outline" : "person-outline"} style={{ fontSize: "14px", color: "#4338CA" }} />
                       </div>
                       <span className="text-sm text-slate-500 font-medium">
                         {trip.type === "driver" ? "You're driving" : trip.driver}
                       </span>
                     </div>
-                    <span className="text-sm font-bold text-blue-600">&#x20BC;{trip.price}</span>
+                    <span className="text-sm font-bold text-indigo-700">&#x20BC;{trip.price}</span>
                   </div>
 
                   {/* Actions */}
                   {!cancelled && (
                     <div className="flex gap-2 mt-4 pt-4 border-t border-slate-50">
                       {trip.status === "upcoming" && trip.type === "passenger" && (
-                        <Link href={`/tracking/${trip.id}`} className="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs text-center flex items-center justify-center gap-1.5 hover:bg-blue-700 transition-colors">
+                        <Link href={`/tracking/${trip.id}`} className="flex-1 bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs text-center flex items-center justify-center gap-1.5 hover:bg-indigo-800 transition-colors">
                           <Icon name="navigate-outline" style={{ fontSize: "13px" }} />
                           Track ride
                         </Link>

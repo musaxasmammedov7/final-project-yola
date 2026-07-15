@@ -25,14 +25,14 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                active ? "text-blue-600" : "text-slate-400"
+                active ? "text-indigo-700" : "text-slate-400"
               }`}
             >
               <Icon
                 name={active ? tab.iconActive : tab.icon}
                 style={{ fontSize: "22px" }}
               />
-              <span className={`text-[10px] font-semibold ${active ? "text-blue-600" : "text-slate-400"}`}>
+              <span className={`text-[10px] font-semibold ${active ? "text-indigo-700" : "text-slate-400"}`}>
                 {tab.label}
               </span>
             </Link>

@@ -79,7 +79,7 @@ export default function TrackingMap({ waypoints, progress }: Props) {
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <PanTo pos={carPos} />
 
-      {traveled.length > 1 && <Polyline positions={traveled} pathOptions={{ color: "#2563EB", weight: 5, opacity: 0.9 }} />}
+      {traveled.length > 1 && <Polyline positions={traveled} pathOptions={{ color: "#4338CA", weight: 5, opacity: 0.9 }} />}
       {remaining.length > 1 && <Polyline positions={remaining} pathOptions={{ color: "#94A3B8", weight: 3, opacity: 0.5, dashArray: "8 6" }} />}
 
       <Marker position={[waypoints[0].lat, waypoints[0].lng]} icon={startPin}>
