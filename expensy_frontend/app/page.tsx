@@ -1,6 +1,6 @@
 "use client";
 import Icon from "@/components/Icon";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
@@ -45,7 +45,8 @@ export default function Home() {
   const router = useRouter();
   const greeting = timeGreeting();
 
-  const [proverb] = useState(() => PROVERBS[Math.floor(Math.random() * PROVERBS.length)]);
+  const [proverb, setProverb] = useState(PROVERBS[0]);
+  useEffect(() => { setProverb(PROVERBS[Math.floor(Math.random() * PROVERBS.length)]); }, []);
   const [from, setFrom] = useState("Baku");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("2026-07-15");
@@ -94,8 +95,8 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight leading-tight">Where are you<br />headed today?</h1>
 
             <div className="mt-3">
-              <p className="text-indigo-100 text-sm font-medium italic" suppressHydrationWarning>"{proverb.az}"</p>
-              <p className="text-indigo-300 text-xs mt-0.5" suppressHydrationWarning>{proverb.en}</p>
+              <p className="text-indigo-100 text-sm font-medium italic">"{proverb.az}"</p>
+              <p className="text-indigo-300 text-xs mt-0.5">{proverb.en}</p>
             </div>
           </div>
 
