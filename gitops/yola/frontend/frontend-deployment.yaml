@@ -36,7 +36,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
       containers:
         - name: frontend
-          image: yolaprod.azurecr.io/yola-frontend:7d4173a0207ddb56f73b5863bc75461e2ea7b2b4
+          image: yolaprod.azurecr.io/yola-frontend:946c90e5e98c91cfa024ccfb779ac06ffff9b3f7
           ports:
             - containerPort: 3000
               name: http
