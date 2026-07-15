@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: yola-routes
+  namespace: istio-system
+spec:
+  hosts:
+    - "yola-app.swedencentral.cloudapp.azure.com"
+  gateways:
+    - yola-istio-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /api/
+      route:
+        - destination:
+            host: yola-backend.yola.svc.cluster.local
+            port:
+              number: 8706
+    - route:
+        - destination:
+            host: yola-frontend.yola.svc.cluster.local
+            port:
+              number: 3000
