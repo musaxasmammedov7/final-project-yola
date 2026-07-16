@@ -48,6 +48,13 @@ export async function createRide(data: Partial<IRide>) {
   return ride;
 }
 
+export async function deleteAllRides() {
+  await Ride.deleteMany({});
+  // flush all ride caches
+  const keys = await redis.keys('rides:*');
+  if (keys.length) await redis.del(...keys);
+}
+
 export async function getAllRides() {
   const cached = await redis.get('rides:all');
   if (cached) return JSON.parse(cached);

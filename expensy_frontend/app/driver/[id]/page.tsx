@@ -177,6 +177,23 @@ function DriverPage({ id }: { id: string }) {
           </div>
         </div>
 
+        {/* Contact */}
+        {driverRides[0] && (
+          <Link
+            href={`/chat/${driverRides[0].id}`}
+            className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-3 hover:border-indigo-200 transition-colors block"
+          >
+            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Icon name="chatbubble-ellipses-outline" style={{ fontSize: "20px", color: "#4338CA" }} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-slate-900">Message {driver.name}</p>
+              <p className="text-xs text-slate-400 mt-0.5">Send a message before your trip</p>
+            </div>
+            <Icon name="chevron-forward-outline" style={{ fontSize: "16px", color: "#CBD5E1" }} />
+          </Link>
+        )}
+
         {/* Car photos */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-5 pt-5 pb-3">
