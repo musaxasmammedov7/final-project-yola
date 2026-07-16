@@ -46,6 +46,7 @@ export default function Home() {
   const greeting = timeGreeting();
 
   const [proverb, setProverb] = useState(PROVERBS[0]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setProverb(PROVERBS[Math.floor(Math.random() * PROVERBS.length)]); }, []);
   const [from, setFrom] = useState("Baku");
   const [to, setTo] = useState("");
