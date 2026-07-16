@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - "expensy_frontend/**"
+      - "frontend/**"
   pull_request:
     branches: [main]
     paths:
-      - "expensy_frontend/**"
+      - "frontend/**"
   workflow_dispatch:
 
 env:
@@ -50,21 +50,21 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: expensy_frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       # ── 3. Install dependencies ───────────────────────────────────────────
       # npm ci — строгая установка строго по package-lock.json (воспроизводимо).
       # --legacy-peer-deps нужен из-за конфликтов peer dependencies в Next.js экосистеме.
       # Устанавливаем ОДИН РАЗ — Snyk, build и Trivy используют эти же node_modules.
       - name: Install dependencies
-        working-directory: expensy_frontend
+        working-directory: frontend
         run: npm ci --legacy-peer-deps
 
       # ── 4. SonarCloud — статический анализ кода ───────────────────────────
       - name: SonarCloud – Code analysis
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
-          projectBaseDir: expensy_frontend
+          projectBaseDir: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -77,23 +77,23 @@ jobs:
       - name: Snyk – Scan dependencies
         uses: snyk/actions/node@master
         with:
-          args: --file=expensy_frontend/package.json --severity-threshold=high
+          args: --file=frontend/package.json --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Typecheck
-        working-directory: expensy_frontend
+        working-directory: frontend
         run: npm run typecheck
 
       - name: Lint
-        working-directory: expensy_frontend
+        working-directory: frontend
         run: npm run lint
 
       # ── 6. Build (Next.js) ────────────────────────────────────────────────
       # Собираем production build перед сборкой Docker образа.
       # NEXT_TELEMETRY_DISABLED отключает телеметрию Next.js в CI.
       - name: Build (Next.js)
-        working-directory: expensy_frontend
+        working-directory: frontend
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
@@ -110,8 +110,8 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v6
         with:
-          context: expensy_frontend
-          file: expensy_frontend/Dockerfile
+          context: frontend
+          file: frontend/Dockerfile
           platforms: linux/amd64
           push: false
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
@@ -146,8 +146,8 @@ jobs:
         id: docker_push
         uses: docker/build-push-action@v6
         with:
-          context: expensy_frontend
-          file: expensy_frontend/Dockerfile
+          context: frontend
+          file: frontend/Dockerfile
           platforms: linux/amd64
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}

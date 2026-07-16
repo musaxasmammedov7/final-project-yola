@@ -33,7 +33,7 @@ crash.*.log
 **/out/
 
 # ── Инфраструктура и локальные данные кластера ──
-expensy-data/
+yola-data/
 *.log
 
 # ── Claude / AI agent files ──
