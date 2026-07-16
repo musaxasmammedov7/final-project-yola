@@ -86,6 +86,20 @@ function Chat({ id }: { id: string }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 max-w-2xl w-full mx-auto space-y-3 pb-32 md:pb-6">
+        {/* Ride summary card */}
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm mx-auto max-w-xs text-center mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Your trip</p>
+          <p className="text-sm font-bold text-slate-900">
+            {ride.waypoints[0].city} → {ride.waypoints[ride.waypoints.length - 1].city}
+          </p>
+          <p className="text-xs text-slate-400 mt-0.5">{ride.date} · {ride.departureTime} · {ride.car}</p>
+          {ride.waypoints.length > 2 && (
+            <p className="text-[10px] text-slate-400 mt-1">
+              via {ride.waypoints.slice(1, -1).map(w => w.city).join(", ")}
+            </p>
+          )}
+        </div>
+
         {/* Date separator */}
         <div className="flex items-center gap-3 my-2">
           <div className="flex-1 h-px bg-slate-100" />
