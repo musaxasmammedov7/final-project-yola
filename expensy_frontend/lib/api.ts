@@ -78,7 +78,10 @@ export async function postBooking(data: {
 export async function fetchBooking(id: string): Promise<ApiBooking> {
   const res = await fetch(`${API_URL}/api/bookings/${id}`);
   if (!res.ok) throw new Error("Booking not found");
-  return res.json();
+  const b = await res.json();
+  // rideId may arrive as a MongoDB ObjectId object — normalize to string
+  if (b.rideId && typeof b.rideId !== "string") b.rideId = b.rideId.$oid ?? String(b.rideId);
+  return b;
 }
 
 // localStorage helpers
