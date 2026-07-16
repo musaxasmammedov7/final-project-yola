@@ -37,7 +37,7 @@ spec:
       containers:
         - name: backend
           # CI updates this tag automatically via commit
-          image: yolaprod.azurecr.io/yola-backend:4c4d938c6f3924cace493685a37963e9ea2d50e3
+          image: yolaprod.azurecr.io/yola-backend:98c963d33928ef6185e4dfa32f89d9123db5a9cf
           ports:
             - containerPort: 8706
               name: http
