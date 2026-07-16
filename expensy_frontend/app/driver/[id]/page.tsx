@@ -21,7 +21,7 @@ function StarBar({ rating, max = 5 }: { rating: number; max?: number }) {
 function CarCarousel({ driver }: { driver: NonNullable<ReturnType<typeof DRIVER_PROFILES.find>> }) {
   const slides: { photo?: string; bg?: string; emoji?: string; label: string }[] =
     driver.carPhotos
-      ? driver.carPhotos.map((photo, i) => ({ photo, label: i === 0 ? "Exterior" : "Interior" }))
+      ? driver.carPhotos.map((photo, i) => ({ photo, label: ["Exterior", "Interior", "Wheels"][i] ?? `Photo ${i + 1}` }))
       : [
           { bg: driver.carBgColor, emoji: "🚗", label: "Exterior" },
           { bg: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)", emoji: "🛞", label: "Wheels" },

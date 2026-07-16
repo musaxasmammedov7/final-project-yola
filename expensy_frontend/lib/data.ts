@@ -60,7 +60,7 @@ export const DRIVER_PROFILES: DriverProfile[] = [
     carYear: 2021,
     carColor: "Silver",
     carBgColor: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
-    carPhotos: ["/cars/camry-2021.jpg", "/cars/camry-2021-interior.jpg"],
+    carPhotos: ["/cars/camry-2021.jpg", "/cars/camry-2021-interior.jpg", "/cars/camry-2021-wheels.avif"],
     rating: 4.8,
     trips: 47,
     fiveStarPct: 89,
