@@ -19,11 +19,14 @@ function StarBar({ rating, max = 5 }: { rating: number; max?: number }) {
 }
 
 function CarCarousel({ driver }: { driver: NonNullable<ReturnType<typeof DRIVER_PROFILES.find>> }) {
-  const slides = [
-    { bg: driver.carBgColor, emoji: "🚗", label: "Exterior" },
-    { bg: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)", emoji: "🛞", label: "Wheels" },
-    { bg: "linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)", emoji: "💺", label: "Interior" },
-  ];
+  const slides: { photo?: string; bg?: string; emoji?: string; label: string }[] =
+    driver.carPhotos
+      ? driver.carPhotos.map((photo, i) => ({ photo, label: i === 0 ? "Exterior" : "Interior" }))
+      : [
+          { bg: driver.carBgColor, emoji: "🚗", label: "Exterior" },
+          { bg: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)", emoji: "🛞", label: "Wheels" },
+          { bg: "linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)", emoji: "💺", label: "Interior" },
+        ];
   const [idx, setIdx] = useState(0);
   const touchX = useRef<number | null>(null);
 
@@ -46,9 +49,13 @@ function CarCarousel({ driver }: { driver: NonNullable<ReturnType<typeof DRIVER_
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <span style={{ fontSize: "80px", filter: "drop-shadow(0 6px 20px rgba(0,0,0,0.2))", userSelect: "none" }}>
-          {slides[idx].emoji}
-        </span>
+        {slides[idx].photo ? (
+          <img src={slides[idx].photo} alt={slides[idx].label} className="w-full h-full object-cover" />
+        ) : (
+          <span style={{ fontSize: "80px", filter: "drop-shadow(0 6px 20px rgba(0,0,0,0.2))", userSelect: "none" }}>
+            {slides[idx].emoji}
+          </span>
+        )}
         {/* dot indicators */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {slides.map((_, i) => (

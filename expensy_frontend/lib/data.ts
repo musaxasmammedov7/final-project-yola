@@ -26,6 +26,7 @@ export type DriverProfile = {
   carYear: number;
   carColor: string;
   carBgColor: string; // CSS gradient for car photo placeholder
+  carPhotos?: string[]; // real car images: [exterior, interior, ...]
   rating: number;
   trips: number;
   fiveStarPct: number;
@@ -59,6 +60,7 @@ export const DRIVER_PROFILES: DriverProfile[] = [
     carYear: 2021,
     carColor: "Silver",
     carBgColor: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
+    carPhotos: ["/cars/camry-2021.jpg", "/cars/camry-2021-interior.jpg"],
     rating: 4.8,
     trips: 47,
     fiveStarPct: 89,
