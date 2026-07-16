@@ -16,7 +16,7 @@ type Msg = ChatMsg | RidesMsg;
 type HistoryMsg = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
-  "Baku to Ganja tomorrow",
+  "Baku to Ganja today",
   "Baku to Sheki this weekend",
   "Sumqayit to Baku today",
 ];
@@ -217,13 +217,19 @@ export default function ChatBot() {
           </div>
 
           {msgs.length === 1 && (
-            <div className="px-4 pb-2 flex flex-wrap gap-2">
-              {SUGGESTIONS.map(s => (
-                <button key={s} onClick={() => send(s)}
-                  className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-100 transition-colors">
-                  {s}
-                </button>
-              ))}
+            <div className="px-4 pb-2">
+              <p className="text-[10px] text-slate-400 font-medium mb-2 flex items-center gap-1">
+                <Icon name="time-outline" style={{ fontSize: "11px" }} />
+                Based on your ride history
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SUGGESTIONS.map(s => (
+                  <button key={s} onClick={() => send(s)}
+                    className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-100 transition-colors">
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
