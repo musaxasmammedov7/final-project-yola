@@ -18,7 +18,7 @@ export default function OfferPage() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [stops, setStops] = useState<string[]>([]);
-  const [date, setDate] = useState("2026-07-15");
+  const [date, setDate] = useState("2026-07-16");
   const [time, setTime] = useState("09:00");
   const [seats, setSeats] = useState(3);
   const [price, setPrice] = useState(5);

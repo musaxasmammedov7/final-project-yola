@@ -49,7 +49,7 @@ export default function Home() {
   useEffect(() => { setProverb(PROVERBS[Math.floor(Math.random() * PROVERBS.length)]); }, []);
   const [from, setFrom] = useState("Baku");
   const [to, setTo] = useState("");
-  const [date, setDate] = useState("2026-07-15");
+  const [date, setDate] = useState("2026-07-16");
   const [seats, setSeats] = useState(1);
   const [picker, setPicker] = useState<"from" | "to" | null>(null);
 
