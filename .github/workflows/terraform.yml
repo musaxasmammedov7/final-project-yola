@@ -27,6 +27,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   TF_VAR_alertmanager_smtp_password: ${{ secrets.ALERTMANAGER_SMTP_PASSWORD }}
   TF_VAR_alertmanager_telegram_token: ${{ secrets.ALERTMANAGER_TELEGRAM_TOKEN }}
+  TF_VAR_groq_api_key: ${{ secrets.GROQ_API_KEY }}
 
 jobs:
   security-scan:

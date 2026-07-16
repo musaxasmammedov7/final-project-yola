@@ -1,6 +1,15 @@
 import { Request, Response } from 'express';
 import * as rideService from '../services/ride.service';
 
+export async function deleteAllRides(req: Request, res: Response): Promise<void> {
+  try {
+    await rideService.deleteAllRides();
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete rides' });
+  }
+}
+
 export async function listRides(req: Request, res: Response): Promise<void> {
   try {
     const { from, to, date, seats } = req.query;

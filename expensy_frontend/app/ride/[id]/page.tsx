@@ -120,6 +120,13 @@ function RideDetail({ id }: { id: string }) {
           </div>
         </Link>
 
+        {/* Car photo */}
+        {ride.carPhoto && (
+          <div className="rounded-2xl overflow-hidden border border-slate-100 shadow-sm mb-4 bg-white">
+            <img src={ride.carPhoto} alt={`${ride.car} ${ride.carYear}`} className="w-full object-contain max-h-48" />
+          </div>
+        )}
+
         {/* Chips */}
         <div className="flex flex-wrap gap-2 mb-6">
           {[

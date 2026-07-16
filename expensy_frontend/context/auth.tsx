@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export type Car = { id: string; name: string; year: string; color: string; photo: string | null };
 
@@ -33,6 +33,18 @@ const AuthContext = createContext<AuthCtx>({
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem("yola_user");
+      if (s) setUser(JSON.parse(s) as User);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (user) localStorage.setItem("yola_user", JSON.stringify(user));
+    else localStorage.removeItem("yola_user");
+  }, [user]);
 
   function login(u: Pick<User, "name" | "email">) {
     setUser({ ...u, bio: "", avatar: null, cars: [] });

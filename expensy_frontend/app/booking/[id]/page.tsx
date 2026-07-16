@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import DriverAvatar from "@/components/DriverAvatar";
 import { fetchRide, postBooking, calcSegmentPrice, saveBookingId, type ApiRide } from "@/lib/api";
+import { DRIVER_PROFILES } from "@/lib/data";
 
 function Booking({ id }: { id: string }) {
   const params = useSearchParams();
@@ -105,6 +106,15 @@ function Booking({ id }: { id: string }) {
             <button onClick={() => router.push("/trips")} className="w-full bg-green-600 text-white font-bold py-4 rounded-2xl text-sm hover:bg-green-700 transition-colors">
               View my trips
             </button>
+            {(() => {
+              const driverId = DRIVER_PROFILES.find(d => d.name === ride.driverName)?.id;
+              return driverId ? (
+                <Link href={`/driver/${driverId}`} className="w-full bg-indigo-50 border border-indigo-100 text-indigo-700 font-semibold py-4 rounded-2xl text-sm text-center hover:bg-indigo-100 transition-colors block flex items-center justify-center gap-2">
+                  <Icon name="person-circle-outline" style={{ fontSize: "18px" }} />
+                  View driver profile
+                </Link>
+              ) : null;
+            })()}
             <Link href="/" className="w-full bg-white border border-slate-100 text-slate-600 font-semibold py-4 rounded-2xl text-sm text-center hover:border-slate-200 transition-colors block">
               Back to home
             </Link>

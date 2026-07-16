@@ -1,6 +1,6 @@
 "use client";
 import Icon from "@/components/Icon";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
@@ -45,10 +45,11 @@ export default function Home() {
   const router = useRouter();
   const greeting = timeGreeting();
 
-  const [proverb] = useState(() => PROVERBS[Math.floor(Math.random() * PROVERBS.length)]);
+  const [proverb, setProverb] = useState(PROVERBS[0]);
+  useEffect(() => { setProverb(PROVERBS[Math.floor(Math.random() * PROVERBS.length)]); }, []);
   const [from, setFrom] = useState("Baku");
   const [to, setTo] = useState("");
-  const [date, setDate] = useState("2026-07-15");
+  const [date, setDate] = useState("2026-07-16");
   const [seats, setSeats] = useState(1);
   const [picker, setPicker] = useState<"from" | "to" | null>(null);
 
@@ -94,8 +95,8 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight leading-tight">Where are you<br />headed today?</h1>
 
             <div className="mt-3">
-              <p className="text-indigo-100 text-sm font-medium italic" suppressHydrationWarning>{'\u201C'}{proverb.az}{'\u201D'}</p>
-              <p className="text-indigo-300 text-xs mt-0.5" suppressHydrationWarning>{proverb.en}</p>
+              <p className="text-indigo-100 text-sm font-medium italic">"{proverb.az}"</p>
+              <p className="text-indigo-300 text-xs mt-0.5">{proverb.en}</p>
             </div>
           </div>
 
@@ -135,13 +136,8 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* Search form — Maiden Tower watermark */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 mb-4 overflow-hidden relative">
-          <svg viewBox="0 0 56 100" aria-hidden="true" style={{ position: "absolute", right: -8, bottom: -8, width: 100, height: 130, opacity: 0.04, pointerEvents: "none" }}>
-            <rect x="14" y="10" width="28" height="90" rx="14" fill="#4338CA" />
-            <rect x="28" y="22" width="14" height="78" fill="#4338CA" />
-            <ellipse cx="28" cy="10" rx="14" ry="5" fill="#4338CA" />
-          </svg>
+        {/* Search form */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 mb-4 overflow-hidden">
           <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-50">
             <Icon name="location-outline" style={{ fontSize: "20px", color: "#4338CA", flexShrink: 0 }} />
             <div className="flex-1">
@@ -216,13 +212,8 @@ export default function Home() {
           Find Rides
         </button>
 
-        {/* Recent — Heydar Aliyev Center watermark */}
-        <div className="mb-10 relative overflow-hidden">
-          <svg viewBox="0 0 80 80" aria-hidden="true" style={{ position: "absolute", right: -10, top: "50%", transform: "translateY(-50%)", width: 120, height: 120, opacity: 0.05, pointerEvents: "none" }}>
-            <path d="M8,80 C8,80 6,52 22,42 C38,32 58,36 68,46 C78,56 76,80 76,80 Z" fill="#4338CA" />
-            <path d="M16,80 C16,68 22,52 36,46 C50,40 62,48 68,60 C74,72 74,80 74,80 Z" fill="#4338CA" />
-            <ellipse cx="42" cy="42" rx="10" ry="6" fill="#4338CA" />
-          </svg>
+        {/* Recent */}
+        <div className="mb-10">
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Recent searches</p>
           <div className="flex flex-wrap gap-2">
             {RECENT.map(r => (
@@ -238,13 +229,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Popular routes — Flame Towers watermark */}
-        <div className="mb-10 relative overflow-hidden">
-          <svg viewBox="0 0 80 80" aria-hidden="true" style={{ position: "absolute", right: -4, bottom: -4, width: 110, height: 110, opacity: 0.05, pointerEvents: "none" }}>
-            <path d="M14,80 L14,48 Q16,32 19,20 Q22,10 24,4 Q26,10 28,20 Q31,32 34,48 L34,80 Z" fill="#4338CA" />
-            <path d="M26,80 L26,38 Q29,20 32,10 Q35,2 38,0 Q41,2 44,10 Q47,20 50,38 L50,80 Z" fill="#4338CA" />
-            <path d="M42,80 L42,50 Q44,34 47,22 Q50,12 52,6 Q54,12 56,22 Q59,34 62,50 L62,80 Z" fill="#4338CA" />
-          </svg>
+        {/* Popular routes */}
+        <div className="mb-10">
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Popular routes</p>
           <div className="grid grid-cols-2 gap-3">
             {POPULAR.map(r => (

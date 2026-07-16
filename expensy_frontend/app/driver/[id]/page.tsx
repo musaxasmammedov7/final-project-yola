@@ -19,11 +19,14 @@ function StarBar({ rating, max = 5 }: { rating: number; max?: number }) {
 }
 
 function CarCarousel({ driver }: { driver: NonNullable<ReturnType<typeof DRIVER_PROFILES.find>> }) {
-  const slides = [
-    { bg: driver.carBgColor, emoji: "🚗", label: "Exterior" },
-    { bg: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)", emoji: "🛞", label: "Wheels" },
-    { bg: "linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)", emoji: "💺", label: "Interior" },
-  ];
+  const slides: { photo?: string; bg?: string; emoji?: string; label: string }[] =
+    driver.carPhotos
+      ? driver.carPhotos.map((photo, i) => ({ photo, label: ["Exterior", "Interior", "Wheels"][i] ?? `Photo ${i + 1}` }))
+      : [
+          { bg: driver.carBgColor, emoji: "🚗", label: "Exterior" },
+          { bg: "linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%)", emoji: "🛞", label: "Wheels" },
+          { bg: "linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)", emoji: "💺", label: "Interior" },
+        ];
   const [idx, setIdx] = useState(0);
   const touchX = useRef<number | null>(null);
 
@@ -46,9 +49,13 @@ function CarCarousel({ driver }: { driver: NonNullable<ReturnType<typeof DRIVER_
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <span style={{ fontSize: "80px", filter: "drop-shadow(0 6px 20px rgba(0,0,0,0.2))", userSelect: "none" }}>
-          {slides[idx].emoji}
-        </span>
+        {slides[idx].photo ? (
+          <img src={slides[idx].photo} alt={slides[idx].label} className="w-full h-full object-cover" />
+        ) : (
+          <span style={{ fontSize: "80px", filter: "drop-shadow(0 6px 20px rgba(0,0,0,0.2))", userSelect: "none" }}>
+            {slides[idx].emoji}
+          </span>
+        )}
         {/* dot indicators */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {slides.map((_, i) => (
@@ -169,6 +176,23 @@ function DriverPage({ id }: { id: string }) {
             </div>
           </div>
         </div>
+
+        {/* Contact */}
+        {driverRides[0] && (
+          <Link
+            href={`/chat/${driverRides[0].id}`}
+            className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-3 hover:border-indigo-200 transition-colors block"
+          >
+            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Icon name="chatbubble-ellipses-outline" style={{ fontSize: "20px", color: "#4338CA" }} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-slate-900">Message {driver.name}</p>
+              <p className="text-xs text-slate-400 mt-0.5">Send a message before your trip</p>
+            </div>
+            <Icon name="chevron-forward-outline" style={{ fontSize: "16px", color: "#CBD5E1" }} />
+          </Link>
+        )}
 
         {/* Car photos */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">

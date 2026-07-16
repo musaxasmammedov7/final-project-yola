@@ -135,3 +135,10 @@ variable "alertmanager_telegram_token" {
   sensitive   = true
   default     = ""
 }
+
+variable "groq_api_key" {
+  description = "Groq API key for the frontend AI chat assistant."
+  type        = string
+  sensitive   = true
+  default     = ""
+}

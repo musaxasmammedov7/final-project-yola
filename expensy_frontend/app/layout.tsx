@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" async></script>
       </head>
-      <body className="min-h-full pb-16 md:pb-0">
+      <body className="min-h-full pb-16 md:pb-0" suppressHydrationWarning>
         <AuthProvider>
           {children}
           <BottomNav />

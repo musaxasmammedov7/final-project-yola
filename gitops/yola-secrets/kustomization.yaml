@@ -5,3 +5,4 @@ resources:
   - mongo-external-secret.yaml
   - redis-external-secret.yaml
   - backend-external-secret.yaml
+  - frontend-external-secret.yaml

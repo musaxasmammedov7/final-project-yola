@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import DriverAvatar from "@/components/DriverAvatar";
 import { searchRides, type ApiRide } from "@/lib/api";
-import { CITIES } from "@/lib/data";
+import { CITIES, DRIVER_PROFILES } from "@/lib/data";
+import Link from "next/link";
 
 const KNOWN_CITIES = Object.keys(CITIES);
 
@@ -15,7 +16,7 @@ type Msg = ChatMsg | RidesMsg;
 type HistoryMsg = { role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
-  "Baku to Ganja tomorrow",
+  "Baku to Ganja today",
   "Baku to Sheki this weekend",
   "Sumqayit to Baku today",
 ];
@@ -163,12 +164,26 @@ export default function ChatBot() {
                             <span className="font-semibold text-slate-700">{m.to}</span>
                             <span className="ml-auto">{ride.seats} seat{ride.seats !== 1 ? "s" : ""} left</span>
                           </div>
-                          <button
-                            onClick={() => book(ride, m.from, m.to, m.date, m.seats)}
-                            className="w-full bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl hover:bg-indigo-800 active:scale-95 transition-all"
-                          >
-                            Book for ₼{price}
-                          </button>
+                          <div className="flex gap-2">
+                            {(() => {
+                              const driverId = DRIVER_PROFILES.find(d => d.name === ride.driverName)?.id;
+                              return driverId ? (
+                                <Link
+                                  href={`/driver/${driverId}`}
+                                  onClick={() => setOpen(false)}
+                                  className="flex-1 bg-slate-100 text-slate-700 text-xs font-bold py-2 rounded-xl hover:bg-slate-200 active:scale-95 transition-all text-center"
+                                >
+                                  See profile
+                                </Link>
+                              ) : null;
+                            })()}
+                            <button
+                              onClick={() => book(ride, m.from, m.to, m.date, m.seats)}
+                              className="flex-1 bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl hover:bg-indigo-800 active:scale-95 transition-all"
+                            >
+                              Book ₼{price}
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
@@ -202,13 +217,19 @@ export default function ChatBot() {
           </div>
 
           {msgs.length === 1 && (
-            <div className="px-4 pb-2 flex flex-wrap gap-2">
-              {SUGGESTIONS.map(s => (
-                <button key={s} onClick={() => send(s)}
-                  className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-100 transition-colors">
-                  {s}
-                </button>
-              ))}
+            <div className="px-4 pb-2">
+              <p className="text-[10px] text-slate-400 font-medium mb-2 flex items-center gap-1">
+                <Icon name="time-outline" style={{ fontSize: "11px" }} />
+                Based on your ride history
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SUGGESTIONS.map(s => (
+                  <button key={s} onClick={() => send(s)}
+                    className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full font-medium hover:bg-indigo-100 transition-colors">
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
