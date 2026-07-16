@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import DriverAvatar from "@/components/DriverAvatar";
 import { searchRides, type ApiRide } from "@/lib/api";
-import { CITIES } from "@/lib/data";
+import { CITIES, DRIVER_PROFILES } from "@/lib/data";
+import Link from "next/link";
 
 const KNOWN_CITIES = Object.keys(CITIES);
 
@@ -163,12 +164,26 @@ export default function ChatBot() {
                             <span className="font-semibold text-slate-700">{m.to}</span>
                             <span className="ml-auto">{ride.seats} seat{ride.seats !== 1 ? "s" : ""} left</span>
                           </div>
-                          <button
-                            onClick={() => book(ride, m.from, m.to, m.date, m.seats)}
-                            className="w-full bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl hover:bg-indigo-800 active:scale-95 transition-all"
-                          >
-                            Book for ₼{price}
-                          </button>
+                          <div className="flex gap-2">
+                            {(() => {
+                              const driverId = DRIVER_PROFILES.find(d => d.name === ride.driverName)?.id;
+                              return driverId ? (
+                                <Link
+                                  href={`/driver/${driverId}`}
+                                  onClick={() => setOpen(false)}
+                                  className="flex-1 bg-slate-100 text-slate-700 text-xs font-bold py-2 rounded-xl hover:bg-slate-200 active:scale-95 transition-all text-center"
+                                >
+                                  See profile
+                                </Link>
+                              ) : null;
+                            })()}
+                            <button
+                              onClick={() => book(ride, m.from, m.to, m.date, m.seats)}
+                              className="flex-1 bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl hover:bg-indigo-800 active:scale-95 transition-all"
+                            >
+                              Book ₼{price}
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
