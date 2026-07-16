@@ -32,13 +32,14 @@ const AuthContext = createContext<AuthCtx>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window === "undefined") return null;
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
     try {
       const s = localStorage.getItem("yola_user");
-      return s ? (JSON.parse(s) as User) : null;
-    } catch { return null; }
-  });
+      if (s) setUser(JSON.parse(s) as User);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (user) localStorage.setItem("yola_user", JSON.stringify(user));
