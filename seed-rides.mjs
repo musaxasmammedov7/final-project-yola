@@ -14,7 +14,7 @@ const RIDES = [
       { city: "Ganja",    lat: 40.6828, lng: 46.3606, detail: "Central Bus Station" },
     ],
     date: "2026-07-16", departureTime: "09:00", arrivalTime: "12:30",
-    price: 5, seats: 3, car: "Toyota Camry", carYear: 2021, carColor: "Silver",
+    price: 5, seats: 10, car: "Toyota Camry", carYear: 2021, carColor: "Silver",
     carPhoto: "/cars/camry-2021.jpg",
   },
   {
