@@ -14,6 +14,7 @@ export type ApiRide = {
   car: string;
   carYear: number;
   carColor: string;
+  carPhoto?: string;
   segmentPrice?: number;
 };
 

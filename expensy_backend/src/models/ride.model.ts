@@ -20,6 +20,7 @@ export interface IRide extends Document {
   car: string;
   carYear: number;
   carColor: string;
+  carPhoto?: string;
   createdAt: Date;
 }
 
@@ -43,6 +44,7 @@ const RideSchema = new Schema<IRide>({
   car:          { type: String, required: true },
   carYear:      { type: Number, required: true },
   carColor:     { type: String, required: true },
+  carPhoto:     { type: String },
   createdAt:    { type: Date, default: Date.now },
 });
 
