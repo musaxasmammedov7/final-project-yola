@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const s = localStorage.getItem("yola_user");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (s) setUser(JSON.parse(s) as User);
     } catch {}
   }, []);

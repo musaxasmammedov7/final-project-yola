@@ -95,7 +95,7 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight leading-tight">Where are you<br />headed today?</h1>
 
             <div className="mt-3">
-              <p className="text-indigo-100 text-sm font-medium italic">"{proverb.az}"</p>
+              <p className="text-indigo-100 text-sm font-medium italic">&ldquo;{proverb.az}&rdquo;</p>
               <p className="text-indigo-300 text-xs mt-0.5">{proverb.en}</p>
             </div>
           </div>
