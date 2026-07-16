@@ -79,6 +79,17 @@ resource "azurerm_key_vault_secret" "grafana_admin_password" {
   }
 }
 
+resource "azurerm_key_vault_secret" "groq_api_key" {
+  count        = var.groq_api_key != "" ? 1 : 0
+  name         = "groq-api-key"
+  value        = var.groq_api_key
+  key_vault_id = azurerm_key_vault.yola.id
+  depends_on   = [azurerm_role_assignment.terraform_key_vault_secrets_officer]
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
 resource "azurerm_key_vault_secret" "alertmanager_smtp_password" {
   count        = var.alertmanager_smtp_password != "" ? 1 : 0
   name         = "alertmanager-smtp-password"
